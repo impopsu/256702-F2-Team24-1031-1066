@@ -2,7 +2,6 @@ package com.project;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
 import javafx.stage.Stage;
 
 public class App extends Application {
@@ -11,10 +10,11 @@ public class App extends Application {
     }
 
     @Override
-    public void start(Stage primaryStage) {
-        Scene scene = new Scene(new Label("Hello, JavaFX!"), 400, 200);
-        primaryStage.setScene(scene);
-        primaryStage.setTitle("JavaFX App");
-        primaryStage.show();
+    public void start(Stage stage) {
+        MainScene mainScene = new MainScene();
+        Scene scene = mainScene.createScene();
+        stage.setScene(scene);
+        stage.setTitle("JavaFX App");
+        stage.show();
     }
 }
