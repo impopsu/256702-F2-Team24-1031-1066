@@ -1,0 +1,5 @@
+com\project\ViewExpensesView.class
+com\project\App.class
+com\project\MainView.class
+com\project\AddExpenseView.class
+com\project\DatabaseHelper.class

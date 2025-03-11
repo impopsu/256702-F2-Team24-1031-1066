@@ -1,20 +1,23 @@
 package com.project;
 
 import javafx.application.Application;
-import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 public class App extends Application {
+
     public static void main(String[] args) {
         launch(args);
     }
 
     @Override
     public void start(Stage stage) {
-        MainScene mainScene = new MainScene();
-        Scene scene = mainScene.createScene();
-        stage.setScene(scene);
-        stage.setTitle("JavaFX App");
+        // สร้างฐานข้อมูลและตาราง
+        DatabaseHelper.createTable();
+
+        MainView mainView = new MainView(stage);
+        mainView.showMainScene();
+
+        stage.setTitle("Expense Tracker");
         stage.show();
     }
 }
