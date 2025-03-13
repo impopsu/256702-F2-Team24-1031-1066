@@ -8,17 +8,21 @@ import javafx.scene.layout.VBox;
 
 public class ViewExpensesView {
 
-    public Scene createScene(MainView mainView) {
+    private Controller controller;
+
+    public ViewExpensesView(Controller controller) {
+        this.controller = controller;
+    }
+
+    public Scene createViewExpensesScene() {
         Label title = new Label("ดูรายการทั้งหมด");
         title.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
 
         // ดึงรายการจากฐานข้อมูลและแสดง
-        Label expenseList = new Label(DatabaseHelper.getAllExpenses());  // ดึงรายการทั้งหมดจากฐานข้อมูล
+        Label expenseList = new Label(DatabaseHelper.getAllExpenses());
 
         Button backButton = new Button("ย้อนกลับ");
-        backButton.setOnAction(e -> {
-            mainView.showMainScene();
-        });
+        backButton.setOnAction(e -> controller.showMainView());
 
         VBox layout = new VBox(10, title, expenseList, backButton);
         layout.setAlignment(Pos.CENTER);

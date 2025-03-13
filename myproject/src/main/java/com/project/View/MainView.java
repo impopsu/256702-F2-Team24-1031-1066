@@ -9,34 +9,26 @@ import javafx.stage.Stage;
 
 public class MainView {
 
-    private Stage stage;
+    private Controller controller;
 
-    public MainView(Stage stage) {
-        this.stage = stage;
+    public MainView(Controller controller) {
+        this.controller = controller;
     }
 
-    public void showMainScene() {
+    public Scene createMainScene() {
         Label title = new Label("Expense Tracker");
         title.setStyle("-fx-font-size: 20px; -fx-font-weight: bold;");
 
         Button addExpenseButton = new Button("เพิ่มรายจ่าย");
         Button viewExpensesButton = new Button("ดูรายการทั้งหมด");
 
-        addExpenseButton.setOnAction(e -> {
-            AddExpenseView addExpenseView = new AddExpenseView();
-            stage.setScene(addExpenseView.createScene(this));
-        });
-
-        viewExpensesButton.setOnAction(e -> {
-            ViewExpensesView viewExpensesView = new ViewExpensesView();
-            stage.setScene(viewExpensesView.createScene(this));
-        });
+        addExpenseButton.setOnAction(e -> controller.showAddExpenseView());
+        viewExpensesButton.setOnAction(e -> controller.showViewExpensesView());
 
         VBox layout = new VBox(15, title, addExpenseButton, viewExpensesButton);
         layout.setAlignment(Pos.CENTER);
         layout.setStyle("-fx-padding: 20px;");
 
-        Scene scene = new Scene(layout, 400, 300);
-        stage.setScene(scene);
+        return new Scene(layout, 400, 300);
     }
 }

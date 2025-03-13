@@ -9,7 +9,13 @@ import javafx.scene.layout.VBox;
 
 public class AddExpenseView {
 
-    public Scene createScene(MainView mainView) {
+    private Controller controller;
+
+    public AddExpenseView(Controller controller) {
+        this.controller = controller;
+    }
+
+    public Scene createAddExpenseScene() {
         Label title = new Label("เพิ่มรายจ่าย");
         title.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
 
@@ -23,14 +29,16 @@ public class AddExpenseView {
         saveButton.setOnAction(e -> {
             String name = expenseNameField.getText();
             String amount = expenseAmountField.getText();
-            DatabaseHelper.addExpense(name, amount); // เพิ่มข้อมูลลงในฐานข้อมูล
-            System.out.println("บันทึกรายจ่าย: " + name + " - " + amount);
+            try {
+                double expenseAmount = Double.parseDouble(amount);
+                controller.addExpense(name, expenseAmount);
+            } catch (NumberFormatException ex) {
+                System.out.println("จำนวนเงินไม่ถูกต้อง");
+            }
         });
 
         Button backButton = new Button("ย้อนกลับ");
-        backButton.setOnAction(e -> {
-            mainView.showMainScene();
-        });
+        backButton.setOnAction(e -> controller.showMainView());
 
         VBox layout = new VBox(10, title, expenseNameField, expenseAmountField, saveButton, backButton);
         layout.setAlignment(Pos.CENTER);
