@@ -61,7 +61,7 @@ public class SignUpView {
             if (username.isEmpty() || password.isEmpty() || firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() || phoneNumber.isEmpty()) {
                 showAlert("ข้อผิดพลาด", "กรุณากรอกข้อมูลให้ครบทุกช่อง");
             } else if (!phoneNumber.matches("\\d{10}")) {
-                showAlert("ข้อผิดพลาด", "เบอร์โทรศัพท์ต้องเป็นตัวเลข 10 หลัก");
+                showAlert("ข้อผิดพลาด", "เบอร์โทรศัพท์ต้องเป็นตัวเลข");
             } else {
                 if (controller.register(username, password, firstName, lastName, email, phoneNumber)) {
                     showAlert("สำเร็จ", "สมัครสมาชิกสำเร็จ");

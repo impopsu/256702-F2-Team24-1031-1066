@@ -1,15 +1,6 @@
 package com.project;
 
 import javafx.stage.Stage;
-import javafx.scene.Scene;
-import javafx.scene.layout.VBox;
-import javafx.geometry.Pos;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextInputDialog;
-
-import java.util.Optional;
 
 public class Controller {
 
@@ -20,6 +11,9 @@ public class Controller {
     private LoginView loginView;
     private SignUpView signUpView;
     private UserProfileView userProfileView;
+    private AddCategoryView addCategoryView;
+    private ManageCategoriesView manageCategoriesView;
+    private EditExpenseView editExpenseView;
     private boolean isLoggedIn = false;
     private User currentUser;
 
@@ -31,6 +25,9 @@ public class Controller {
         this.loginView = new LoginView(this);
         this.signUpView = new SignUpView(this);
         this.userProfileView = new UserProfileView(this);
+        this.addCategoryView = new AddCategoryView(this);
+        this.manageCategoriesView = new ManageCategoriesView(this);
+        this.editExpenseView = new EditExpenseView(this);
     }
 
     public void start() {
@@ -75,6 +72,18 @@ public class Controller {
         }
     }
 
+    public void showAddCategoryView() {
+        stage.setScene(addCategoryView.createAddCategoryScene());
+    }
+
+    public void showManageCategoriesView() {
+        stage.setScene(manageCategoriesView.createManageCategoriesScene());
+    }
+
+    public void showEditExpenseView(int expenseId, String currentDescription, double currentAmount, String currentCategory) {
+        stage.setScene(editExpenseView.createEditExpenseScene(expenseId, currentDescription, currentAmount, currentCategory));
+    }
+
     public void addExpense(String description, double amount, String category) {
         DatabaseHelper.addExpense(description, amount, category);
         showMainView();
@@ -105,17 +114,9 @@ public class Controller {
         start();
     }
 
-    public boolean editExpense(int id, String description, double amount) {
-        boolean result = DatabaseHelper.editExpense(id, description, amount, ""); // เพิ่มพารามิเตอร์ category
+    public boolean editExpense(int id, String description, double amount, String category) {
+        boolean result = DatabaseHelper.editExpense(id, description, amount, category);
         showMainView();
         return result;
-    }
-
-    private void showAlert(String title, String message) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
     }
 }

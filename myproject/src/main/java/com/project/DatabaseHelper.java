@@ -49,6 +49,21 @@ public class DatabaseHelper {
         categories.add(new ExpenseCategory(name));
     }
 
+    // ลบหมวดหมู่ค่าใช้จ่าย
+    public static void deleteCategory(String name) {
+        categories.removeIf(category -> category.getName().equals(name));
+    }
+
+    // แก้ไขหมวดหมู่ค่าใช้จ่าย
+    public static void editCategory(String oldName, String newName) {
+        for (ExpenseCategory category : categories) {
+            if (category.getName().equals(oldName)) {
+                category.setName(newName);
+                break;
+            }
+        }
+    }
+
     // ดึงหมวดหมู่ค่าใช้จ่ายทั้งหมด
     public static List<ExpenseCategory> getAllCategories() {
         return new ArrayList<>(categories);

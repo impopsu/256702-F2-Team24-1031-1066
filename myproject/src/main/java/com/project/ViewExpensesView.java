@@ -42,37 +42,17 @@ public class ViewExpensesView {
         });
 
         // ปุ่มแก้ไขรายจ่าย
-        Button editButton = new Button("แก้ไขรายจ่าย");
+        Button editButton = new Button("แก้ไขรายการที่เลือก");
         editButton.setStyle("-fx-font-size: 14px; -fx-background-color: #2196F3; -fx-text-fill: white;");
         editButton.setOnAction(e -> {
             String selectedExpense = expenseListView.getSelectionModel().getSelectedItem();
             if (selectedExpense != null) {
-                int id = Integer.parseInt(selectedExpense.split(" - ")[0]);
-
-                TextInputDialog dialogDesc = new TextInputDialog();
-                dialogDesc.setTitle("แก้ไขข้อมูล");
-                dialogDesc.setHeaderText("กรุณากรอกชื่อใหม่");
-                Optional<String> newDescription = dialogDesc.showAndWait();
-
-                TextInputDialog dialogAmount = new TextInputDialog();
-                dialogAmount.setTitle("แก้ไขข้อมูล");
-                dialogAmount.setHeaderText("กรุณากรอกจำนวนเงินใหม่");
-                Optional<String> newAmountStr = dialogAmount.showAndWait();
-
-                if (newDescription.isPresent() && newAmountStr.isPresent()) {
-                    try {
-                        double newAmount = Double.parseDouble(newAmountStr.get());
-                        if (controller.editExpense(id, newDescription.get(), newAmount)) {
-                            showAlert("สำเร็จ", "แก้ไขข้อมูลเรียบร้อย!");
-                            // รีเฟรชรายการหลังแก้ไข
-                            expenseListView.getItems().setAll(DatabaseHelper.getAllExpensesList());
-                        } else {
-                            showAlert("ผิดพลาด", "ไม่พบรายจ่ายที่ต้องการแก้ไข");
-                        }
-                    } catch (NumberFormatException ex) {
-                        showAlert("ข้อผิดพลาด", "กรุณากรอกจำนวนเงินที่ถูกต้อง");
-                    }
-                }
+                String[] parts = selectedExpense.split(" - ");
+                int expenseId = Integer.parseInt(parts[0]);
+                String currentDescription = parts[1];
+                double currentAmount = Double.parseDouble(parts[2]);
+                String currentCategory = parts[3];
+                controller.showEditExpenseView(expenseId, currentDescription, currentAmount, currentCategory);
             }
         });
 
