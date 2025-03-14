@@ -38,4 +38,8 @@ public class Controller {
         DatabaseHelper.addExpense(name, amount);
         showMainView();
     }
+
+    public boolean editExpense(int id, String newDescription, double newAmount) {
+        return DatabaseHelper.editExpense(id, newDescription, newAmount);
+    }
 }

@@ -1,65 +1,49 @@
 package com.project;
 
-import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class DatabaseHelper {
-
-    private static final String URL = "jdbc:sqlite:expenses.db";
-
-    public static Connection connect() {
-        Connection conn = null;
-        try {
-            conn = DriverManager.getConnection(URL);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return conn;
-    }
+    private static List<Expense> expenses = new ArrayList<>();
+    private static int nextId = 1; // Auto-increment ID
 
     public static void createTable() {
-        String sql = "CREATE TABLE IF NOT EXISTS expenses (id INTEGER PRIMARY KEY, name TEXT, amount REAL)";
-        try (Connection conn = connect(); Statement stmt = conn.createStatement()) {
-            stmt.execute(sql);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        // ในกรณีของ List ในหน่วยความจำ ไม่ต้องสร้างตารางจริง แต่เราสามารถใช้ method นี้เพื่อเตรียมข้อมูล
+        expenses.clear();
+        nextId = 1;
+        System.out.println("Database initialized.");
     }
 
-    public static void addExpense(String name, double amount) {
-        String sql = "INSERT INTO expenses(name, amount) VALUES(?, ?)";
-        try (Connection conn = connect(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, name);
-            pstmt.setDouble(2, amount);
-            pstmt.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    public static void addExpense(String description, double amount) {
+        expenses.add(new Expense(nextId++, description, amount));
     }
 
-    public static List<String> getAllExpensesList() {
-        List<String> expenses = new ArrayList<>();
-        String sql = "SELECT * FROM expenses";
-        try (Connection conn = connect(); Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
-            while (rs.next()) {
-                String name = rs.getString("name");
-                double amount = rs.getDouble("amount");
-                expenses.add(name + " - " + amount);
+    public static List<Expense> getAllExpenses() {
+        return new ArrayList<>(expenses);
+    }
+
+    public static boolean deleteExpense(int id) {
+        return expenses.removeIf(expense -> expense.getId() == id);
+    }
+
+    // ✅ ฟังก์ชันแก้ไขข้อมูลในฐานข้อมูล
+    public static boolean editExpense(int id, String newDescription, double newAmount) {
+        for (Expense expense : expenses) {
+            if (expense.getId() == id) {
+                expense.setDescription(newDescription);
+                expense.setAmount(newAmount);
+                return true; // สำเร็จ
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
-        return expenses;
+        return false; // ไม่พบ ID
     }
 
-    public static void deleteExpense(String name) {
-        String sql = "DELETE FROM expenses WHERE name = ?";
-        try (Connection conn = connect(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, name);
-            pstmt.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
+    // ✅ ฟังก์ชันใหม่เพื่อแปลงรายการเป็น List<String> สำหรับแสดงใน UI
+    public static List<String> getAllExpensesList() {
+        List<String> expenseStrings = new ArrayList<>();
+        for (Expense expense : expenses) {
+            expenseStrings.add(expense.getId() + " - " + expense.getDescription() + " - " + expense.getAmount());
         }
+        return expenseStrings;
     }
 }
