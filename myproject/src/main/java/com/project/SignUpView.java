@@ -18,15 +18,18 @@ public class SignUpView {
 
     public Scene createSignUpScene() {
         Label title = new Label("สมัครสมาชิก");
-        title.setStyle("-fx-font-size: 20px; -fx-font-weight: bold;");
+        title.setStyle("-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #333;");
 
         TextField usernameField = new TextField();
         usernameField.setPromptText("ชื่อผู้ใช้");
+        usernameField.setStyle("-fx-font-size: 14px; -fx-padding: 10px;");
 
         PasswordField passwordField = new PasswordField();
         passwordField.setPromptText("รหัสผ่าน");
+        passwordField.setStyle("-fx-font-size: 14px; -fx-padding: 10px;");
 
         Button registerButton = new Button("สมัครสมาชิก");
+        registerButton.setStyle("-fx-font-size: 14px; -fx-background-color: #4CAF50; -fx-text-fill: white;");
         registerButton.setOnAction(e -> {
             String username = usernameField.getText();
             String password = passwordField.getText();
@@ -39,14 +42,15 @@ public class SignUpView {
         });
 
         Button backButton = new Button("กลับไปยังหน้าล็อกอิน");
+        backButton.setStyle("-fx-font-size: 14px; -fx-background-color: #f44336; -fx-text-fill: white;");
         backButton.setOnAction(e -> {
             controller.start(); // กลับไปที่หน้า Login
         });
 
         VBox layout = new VBox(15, title, usernameField, passwordField, registerButton, backButton);
         layout.setAlignment(Pos.CENTER);
-        layout.setStyle("-fx-padding: 20px;");
+        layout.setStyle("-fx-padding: 30px; -fx-background-color: #f0f0f0;");
 
-        return new Scene(layout, 400, 300);
+        return new Scene(layout, 600, 400); // ปรับขนาดหน้าจอเป็น 600x400
     }
 }

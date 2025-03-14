@@ -54,6 +54,7 @@ public class Controller {
         boolean result = DatabaseHelper.checkLogin(username, password);
         if (result) {
             isLoggedIn = true;
+            showMainView();
         }
         return result;
     }
@@ -68,8 +69,8 @@ public class Controller {
     }
 
     public boolean editExpense(int id, String name, double amount) {
-        DatabaseHelper.editExpense(id, name, amount);
+        boolean result = DatabaseHelper.editExpense(id, name, amount);
         showMainView();
-        return true;
+        return result;
     }
 }
