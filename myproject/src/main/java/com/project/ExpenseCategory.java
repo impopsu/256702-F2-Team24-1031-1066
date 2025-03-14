@@ -2,9 +2,11 @@ package com.project;
 
 public class ExpenseCategory {
     private String name;
+    private String type; // "income" หรือ "expense"
 
-    public ExpenseCategory(String name) {
+    public ExpenseCategory(String name, String type) {
         this.name = name;
+        this.type = type;
     }
 
     public String getName() {
@@ -13,5 +15,13 @@ public class ExpenseCategory {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }

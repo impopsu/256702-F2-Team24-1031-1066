@@ -1,7 +1,6 @@
 package com.project;
 
 public class User {
-
     private String username;
     private String password;
     private String firstName;
@@ -9,7 +8,6 @@ public class User {
     private String email;
     private String phoneNumber;
 
-    // Constructor
     public User(String username, String password, String firstName, String lastName, String email, String phoneNumber) {
         this.username = username;
         this.password = password;
@@ -19,7 +17,6 @@ public class User {
         this.phoneNumber = phoneNumber;
     }
 
-    // Getters and Setters
     public String getUsername() {
         return username;
     }

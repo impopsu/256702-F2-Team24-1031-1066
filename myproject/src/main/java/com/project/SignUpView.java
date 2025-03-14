@@ -21,36 +21,42 @@ public class SignUpView {
     }
 
     public Scene createSignUpScene() {
-        Label title = new Label("สมัครสมาชิก");
-        title.setStyle("-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #333;");
+        Label titleLabel = new Label("สมัครสมาชิก");
+        titleLabel.setStyle("-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #333;");
 
+        Label usernameLabel = new Label("ชื่อผู้ใช้:");
         TextField usernameField = new TextField();
         usernameField.setPromptText("ชื่อผู้ใช้");
         usernameField.setStyle("-fx-font-size: 14px; -fx-padding: 10px;");
 
+        Label passwordLabel = new Label("รหัสผ่าน:");
         PasswordField passwordField = new PasswordField();
         passwordField.setPromptText("รหัสผ่าน");
         passwordField.setStyle("-fx-font-size: 14px; -fx-padding: 10px;");
 
+        Label firstNameLabel = new Label("ชื่อจริง:");
         TextField firstNameField = new TextField();
         firstNameField.setPromptText("ชื่อจริง");
         firstNameField.setStyle("-fx-font-size: 14px; -fx-padding: 10px;");
 
+        Label lastNameLabel = new Label("นามสกุล:");
         TextField lastNameField = new TextField();
         lastNameField.setPromptText("นามสกุล");
         lastNameField.setStyle("-fx-font-size: 14px; -fx-padding: 10px;");
 
+        Label emailLabel = new Label("อีเมล:");
         TextField emailField = new TextField();
         emailField.setPromptText("อีเมล");
         emailField.setStyle("-fx-font-size: 14px; -fx-padding: 10px;");
 
+        Label phoneNumberLabel = new Label("เบอร์โทรศัพท์:");
         TextField phoneNumberField = new TextField();
         phoneNumberField.setPromptText("เบอร์โทรศัพท์");
         phoneNumberField.setStyle("-fx-font-size: 14px; -fx-padding: 10px;");
 
-        Button registerButton = new Button("สมัครสมาชิก");
-        registerButton.setStyle("-fx-font-size: 14px; -fx-background-color: #4CAF50; -fx-text-fill: white;");
-        registerButton.setOnAction(e -> {
+        Button signUpButton = new Button("สมัครสมาชิก");
+        signUpButton.setStyle("-fx-font-size: 14px; -fx-background-color: #4CAF50; -fx-text-fill: white;");
+        signUpButton.setOnAction(e -> {
             String username = usernameField.getText();
             String password = passwordField.getText();
             String firstName = firstNameField.getText();
@@ -78,18 +84,9 @@ public class SignUpView {
             controller.showLoginView(); // กลับไปที่หน้า Login
         });
 
-        VBox formLayout = new VBox(15, title, usernameField, passwordField, firstNameField, lastNameField, emailField, phoneNumberField);
-        formLayout.setAlignment(Pos.CENTER);
-        formLayout.setStyle("-fx-padding: 30px; -fx-background-color: #f0f0f0;");
-
-        HBox buttonLayout = new HBox(15, backButton, registerButton);
-        buttonLayout.setAlignment(Pos.BOTTOM_RIGHT);
-        buttonLayout.setStyle("-fx-padding: 30px;");
-
-        BorderPane layout = new BorderPane();
-        layout.setCenter(formLayout);
-        layout.setBottom(buttonLayout);
-        BorderPane.setAlignment(backButton, Pos.BOTTOM_LEFT);
+        VBox layout = new VBox(15, titleLabel, usernameLabel, usernameField, passwordLabel, passwordField, firstNameLabel, firstNameField, lastNameLabel, lastNameField, emailLabel, emailField, phoneNumberLabel, phoneNumberField, signUpButton, backButton);
+        layout.setAlignment(Pos.CENTER_LEFT);
+        layout.setStyle("-fx-padding: 30px; -fx-background-color: #f0f0f0;");
 
         return new Scene(layout, 800, 600); // ปรับขนาดหน้าจอเป็น 800x600
     }
