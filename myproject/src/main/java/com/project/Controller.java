@@ -10,7 +10,9 @@ public class Controller {
     private ViewExpensesView viewExpensesView;
     private LoginView loginView;
     private SignUpView signUpView;
+    private UserProfileView userProfileView;
     private boolean isLoggedIn = false;
+    private User currentUser;
 
     public Controller(Stage stage) {
         this.stage = stage;
@@ -19,12 +21,15 @@ public class Controller {
         this.viewExpensesView = new ViewExpensesView(this);
         this.loginView = new LoginView(this);
         this.signUpView = new SignUpView(this);
+        this.userProfileView = new UserProfileView(this);
     }
 
     public void start() {
-        stage.setScene(loginView.createLoginScene());
-        stage.setTitle("Expense Tracker");
-        stage.show();
+        if (DatabaseHelper.getUsers().isEmpty()) {
+            showSignUpView();
+        } else {
+            showLoginView();
+        }
     }
 
     public void showMainView() {
@@ -45,6 +50,20 @@ public class Controller {
         stage.setScene(signUpView.createSignUpScene());
     }
 
+    public void showLoginView() {
+        stage.setScene(loginView.createLoginScene());
+        stage.setTitle("Expense Tracker");
+        stage.setWidth(800); // ปรับขนาดหน้าจอเป็น 800x600
+        stage.setHeight(600);
+        stage.show();
+    }
+
+    public void showUserProfileView() {
+        if (currentUser != null) {
+            stage.setScene(userProfileView.createUserProfileScene(currentUser));
+        }
+    }
+
     public void addExpense(String name, double amount) {
         DatabaseHelper.addExpense(name, amount);
         showMainView();
@@ -54,17 +73,24 @@ public class Controller {
         boolean result = DatabaseHelper.checkLogin(username, password);
         if (result) {
             isLoggedIn = true;
+            for (User user : DatabaseHelper.getUsers()) {
+                if (user.getUsername().equals(username)) {
+                    currentUser = user;
+                    break;
+                }
+            }
             showMainView();
         }
         return result;
     }
 
-    public boolean register(String username, String password) {
-        return DatabaseHelper.registerUser(username, password);
+    public boolean register(String username, String password, String firstName, String lastName, String email, String phoneNumber) {
+        return DatabaseHelper.registerUser(username, password, firstName, lastName, email, phoneNumber);
     }
 
     public void logout() {
         isLoggedIn = false;
+        currentUser = null;
         start();
     }
 

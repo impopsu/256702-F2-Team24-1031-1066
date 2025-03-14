@@ -11,7 +11,7 @@ public class DatabaseHelper {
     private static List<User> users = new ArrayList<>();
 
     static {
-        users.add(new User("user", "password"));
+        users.add(new User("user", "password", "User", "Name", "user@example.com", "1234567890"));
     }
 
     // ตรวจสอบการเข้าสู่ระบบ
@@ -25,13 +25,13 @@ public class DatabaseHelper {
     }
 
     // ลงทะเบียนผู้ใช้ใหม่
-    public static boolean registerUser(String username, String password) {
+    public static boolean registerUser(String username, String password, String firstName, String lastName, String email, String phoneNumber) {
         for (User user : users) {
             if (user.getUsername().equals(username)) {
                 return false;
             }
         }
-        users.add(new User(username, password));
+        users.add(new User(username, password, firstName, lastName, email, phoneNumber));
         return true;
     }
 
@@ -76,5 +76,10 @@ public class DatabaseHelper {
             expenseStrings.add(expense.getId() + " - " + expense.getDescription() + " - " + expense.getAmount());
         }
         return expenseStrings;
+    }
+
+    // ดึงรายการผู้ใช้ทั้งหมด
+    public static List<User> getUsers() {
+        return new ArrayList<>(users);
     }
 }
