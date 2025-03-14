@@ -1,6 +1,15 @@
 package com.project;
 
 import javafx.stage.Stage;
+import javafx.scene.Scene;
+import javafx.scene.layout.VBox;
+import javafx.geometry.Pos;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ListView;
+import javafx.scene.control.TextInputDialog;
+
+import java.util.Optional;
 
 public class Controller {
 
@@ -61,11 +70,13 @@ public class Controller {
     public void showUserProfileView() {
         if (currentUser != null) {
             stage.setScene(userProfileView.createUserProfileScene(currentUser));
+            stage.setWidth(800); // ปรับขนาดหน้าจอเป็น 800x600
+            stage.setHeight(600);
         }
     }
 
-    public void addExpense(String name, double amount) {
-        DatabaseHelper.addExpense(name, amount);
+    public void addExpense(String description, double amount, String category) {
+        DatabaseHelper.addExpense(description, amount, category);
         showMainView();
     }
 
@@ -94,9 +105,17 @@ public class Controller {
         start();
     }
 
-    public boolean editExpense(int id, String name, double amount) {
-        boolean result = DatabaseHelper.editExpense(id, name, amount);
+    public boolean editExpense(int id, String description, double amount) {
+        boolean result = DatabaseHelper.editExpense(id, description, amount, ""); // เพิ่มพารามิเตอร์ category
         showMainView();
         return result;
+    }
+
+    private void showAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 }

@@ -4,12 +4,14 @@ public class Expense {
     private int id;
     private String description;
     private double amount;
+    private String category;
 
     // Constructor
-    public Expense(int id, String description, double amount) {
+    public Expense(int id, String description, double amount, String category) {
         this.id = id;
         this.description = description;
         this.amount = amount;
+        this.category = category;
     }
 
     // Getter for id
@@ -35,5 +37,15 @@ public class Expense {
     // Setter for amount
     public void setAmount(double amount) {
         this.amount = amount;
+    }
+
+    // Getter for category
+    public String getCategory() {
+        return category;
+    }
+
+    // Setter for category
+    public void setCategory(String category) {
+        this.category = category;
     }
 }

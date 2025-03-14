@@ -8,12 +8,6 @@ import javafx.scene.layout.VBox;
 import java.util.List;
 import java.util.Optional;
 
-// นำเข้าคลาสที่จำเป็น
-import com.project.Controller;
-import com.project.DatabaseHelper;
-import com.project.Expense;
-import com.project.User;
-
 public class ViewExpensesView {
 
     private Controller controller;
@@ -31,7 +25,7 @@ public class ViewExpensesView {
         expenseListView.getItems().addAll(expenses);
         expenseListView.setStyle("-fx-font-size: 14px; -fx-padding: 10px;");
 
-        // 🔹 ปุ่มลบรายจ่าย
+        // ปุ่มลบรายจ่าย
         Button deleteButton = new Button("ลบรายจ่ายที่เลือก");
         deleteButton.setStyle("-fx-font-size: 14px; -fx-background-color: #f44336; -fx-text-fill: white;");
         deleteButton.setOnAction(e -> {
@@ -47,6 +41,7 @@ public class ViewExpensesView {
             }
         });
 
+        // ปุ่มแก้ไขรายจ่าย
         Button editButton = new Button("แก้ไขรายจ่าย");
         editButton.setStyle("-fx-font-size: 14px; -fx-background-color: #2196F3; -fx-text-fill: white;");
         editButton.setOnAction(e -> {
@@ -89,7 +84,7 @@ public class ViewExpensesView {
         layout.setAlignment(Pos.CENTER);
         layout.setStyle("-fx-padding: 30px; -fx-background-color: #f0f0f0;");
 
-        return new Scene(layout, 600, 400); // ปรับขนาดหน้าจอเป็น 600x400
+        return new Scene(layout, 800, 600); // ปรับขนาดหน้าจอเป็น 800x600
     }
 
     private void showAlert(String title, String message) {
