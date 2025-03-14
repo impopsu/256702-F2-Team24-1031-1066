@@ -8,6 +8,12 @@ import javafx.scene.layout.VBox;
 import java.util.List;
 import java.util.Optional;
 
+// นำเข้าคลาสที่จำเป็น
+import com.project.Controller;
+import com.project.DatabaseHelper;
+import com.project.Expense;
+import com.project.User;
+
 public class ViewExpensesView {
 
     private Controller controller;
@@ -30,19 +36,21 @@ public class ViewExpensesView {
             String selectedExpense = expenseListView.getSelectionModel().getSelectedItem();
             if (selectedExpense != null) {
                 int id = Integer.parseInt(selectedExpense.split(" - ")[0]);
-                DatabaseHelper.deleteExpense(id);
-                expenseListView.getItems().remove(selectedExpense);
+                if (DatabaseHelper.deleteExpense(id)) {
+                    expenseListView.getItems().remove(selectedExpense);
+                    showAlert("สำเร็จ", "ลบรายจ่ายเรียบร้อย!");
+                } else {
+                    showAlert("ผิดพลาด", "ไม่สามารถลบรายจ่ายได้");
+                }
             }
         });
 
-        // 🔹 ปุ่มแก้ไขรายจ่าย
         Button editButton = new Button("แก้ไขรายจ่าย");
         editButton.setOnAction(e -> {
             String selectedExpense = expenseListView.getSelectionModel().getSelectedItem();
             if (selectedExpense != null) {
                 int id = Integer.parseInt(selectedExpense.split(" - ")[0]);
 
-                // ✅ แสดง Dialog ให้กรอกข้อมูลใหม่
                 TextInputDialog dialogDesc = new TextInputDialog();
                 dialogDesc.setTitle("แก้ไขข้อมูล");
                 dialogDesc.setHeaderText("กรุณากรอกชื่อใหม่");
@@ -54,20 +62,22 @@ public class ViewExpensesView {
                 Optional<String> newAmountStr = dialogAmount.showAndWait();
 
                 if (newDescription.isPresent() && newAmountStr.isPresent()) {
-                    double newAmount = Double.parseDouble(newAmountStr.get());
-
-                    if (controller.editExpense(id, newDescription.get(), newAmount)) {
-                        showAlert("สำเร็จ", "แก้ไขข้อมูลเรียบร้อย!");
-                        expenseListView.getItems().clear();
-                        expenseListView.getItems().addAll(DatabaseHelper.getAllExpensesList());
-                    } else {
-                        showAlert("ผิดพลาด", "ไม่พบรายจ่ายที่ต้องการแก้ไข");
+                    try {
+                        double newAmount = Double.parseDouble(newAmountStr.get());
+                        if (controller.editExpense(id, newDescription.get(), newAmount)) {
+                            showAlert("สำเร็จ", "แก้ไขข้อมูลเรียบร้อย!");
+                            // รีเฟรชรายการหลังแก้ไข
+                            expenseListView.getItems().setAll(DatabaseHelper.getAllExpensesList());
+                        } else {
+                            showAlert("ผิดพลาด", "ไม่พบรายจ่ายที่ต้องการแก้ไข");
+                        }
+                    } catch (NumberFormatException ex) {
+                        showAlert("ข้อผิดพลาด", "กรุณากรอกจำนวนเงินที่ถูกต้อง");
                     }
                 }
             }
         });
 
-        // 🔹 ปุ่มย้อนกลับ
         Button backButton = new Button("ย้อนกลับ");
         backButton.setOnAction(e -> controller.showMainView());
 

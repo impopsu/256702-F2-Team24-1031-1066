@@ -7,7 +7,6 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) {
-        // สร้างฐานข้อมูลและตาราง
         DatabaseHelper.createTable();
 
         Controller controller = new Controller(stage);

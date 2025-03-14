@@ -6,7 +6,6 @@ public class ExpenseModel {
 
     private static final String URL = "jdbc:sqlite:expenses.db";
 
-    // Connect to the database
     public static Connection connect() {
         Connection conn = null;
         try {
@@ -17,7 +16,6 @@ public class ExpenseModel {
         return conn;
     }
 
-    // Create table if it doesn't exist
     public static void createTable() {
         String sql = "CREATE TABLE IF NOT EXISTS expenses (id INTEGER PRIMARY KEY, name TEXT, amount REAL)";
 
@@ -28,7 +26,6 @@ public class ExpenseModel {
         }
     }
 
-    // Add an expense to the database
     public static void addExpense(String name, String amount) {
         String sql = "INSERT INTO expenses(name, amount) VALUES(?, ?)";
 
@@ -41,7 +38,6 @@ public class ExpenseModel {
         }
     }
 
-    // Get all expenses from the database
     public static String getAllExpenses() {
         StringBuilder sb = new StringBuilder();
         String sql = "SELECT * FROM expenses";

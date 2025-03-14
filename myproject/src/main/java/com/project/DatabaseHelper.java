@@ -4,11 +4,36 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DatabaseHelper {
+
     private static List<Expense> expenses = new ArrayList<>();
-    private static int nextId = 1; // Auto-increment ID
+    private static int nextId = 1;
+
+    private static List<User> users = new ArrayList<>();
+
+    static {
+        users.add(new User("user", "password"));
+    }
+
+    public static boolean checkLogin(String username, String password) {
+        for (User user : users) {
+            if (user.getUsername().equals(username) && user.getPassword().equals(password)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean registerUser(String username, String password) {
+        for (User user : users) {
+            if (user.getUsername().equals(username)) {
+                return false;
+            }
+        }
+        users.add(new User(username, password));
+        return true;
+    }
 
     public static void createTable() {
-        // ในกรณีของ List ในหน่วยความจำ ไม่ต้องสร้างตารางจริง แต่เราสามารถใช้ method นี้เพื่อเตรียมข้อมูล
         expenses.clear();
         nextId = 1;
         System.out.println("Database initialized.");
@@ -26,19 +51,17 @@ public class DatabaseHelper {
         return expenses.removeIf(expense -> expense.getId() == id);
     }
 
-    // ✅ ฟังก์ชันแก้ไขข้อมูลในฐานข้อมูล
     public static boolean editExpense(int id, String newDescription, double newAmount) {
         for (Expense expense : expenses) {
             if (expense.getId() == id) {
                 expense.setDescription(newDescription);
                 expense.setAmount(newAmount);
-                return true; // สำเร็จ
+                return true;
             }
         }
-        return false; // ไม่พบ ID
+        return false;
     }
 
-    // ✅ ฟังก์ชันใหม่เพื่อแปลงรายการเป็น List<String> สำหรับแสดงใน UI
     public static List<String> getAllExpensesList() {
         List<String> expenseStrings = new ArrayList<>();
         for (Expense expense : expenses) {
