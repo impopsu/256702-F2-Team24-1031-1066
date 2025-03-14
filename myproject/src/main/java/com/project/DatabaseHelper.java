@@ -1,6 +1,8 @@
 package com.project;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DatabaseHelper {
 
@@ -36,18 +38,28 @@ public class DatabaseHelper {
         }
     }
 
-    public static String getAllExpenses() {
-        StringBuilder sb = new StringBuilder();
+    public static List<String> getAllExpensesList() {
+        List<String> expenses = new ArrayList<>();
         String sql = "SELECT * FROM expenses";
         try (Connection conn = connect(); Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
                 String name = rs.getString("name");
                 double amount = rs.getDouble("amount");
-                sb.append(name).append(" - ").append(amount).append("\n");
+                expenses.add(name + " - " + amount);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return sb.toString();
+        return expenses;
+    }
+
+    public static void deleteExpense(String name) {
+        String sql = "DELETE FROM expenses WHERE name = ?";
+        try (Connection conn = connect(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, name);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }
