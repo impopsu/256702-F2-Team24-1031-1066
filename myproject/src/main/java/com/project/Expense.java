@@ -1,45 +1,62 @@
 package com.project;
 
 import java.time.LocalDate;
+import javafx.beans.property.*;
 
 public class Expense {
-    private int id;
-    private String description;
-    private double amount;
-    private LocalDate date;
+    private final IntegerProperty id;
+    private final StringProperty description;
+    private final DoubleProperty amount;
+    private final ObjectProperty<LocalDate> date;
 
     public Expense(int id, String description, double amount, LocalDate date) {
-        this.id = id;
-        this.description = description;
-        this.amount = amount;
-        this.date = date;
+        this.id = new SimpleIntegerProperty(id);
+        this.description = new SimpleStringProperty(description);
+        this.amount = new SimpleDoubleProperty(amount);
+        this.date = new SimpleObjectProperty<>(date);
     }
 
     public int getId() {
+        return id.get();
+    }
+
+    public IntegerProperty idProperty() {
         return id;
     }
 
     public String getDescription() {
+        return description.get();
+    }
+
+    public StringProperty descriptionProperty() {
         return description;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public double getAmount() {
+        return amount.get();
     }
 
-    public double getAmount() {
+    public DoubleProperty amountProperty() {
         return amount;
     }
 
-    public void setAmount(double amount) {
-        this.amount = amount;
+    public LocalDate getDate() {
+        return date.get();
     }
 
-    public LocalDate getDate() {
+    public ObjectProperty<LocalDate> dateProperty() {
         return date;
     }
 
+    public void setDescription(String description) {
+        this.description.set(description);
+    }
+
+    public void setAmount(double amount) {
+        this.amount.set(amount);
+    }
+
     public void setDate(LocalDate date) {
-        this.date = date;
+        this.date.set(date);
     }
 }
