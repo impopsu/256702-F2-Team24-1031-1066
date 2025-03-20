@@ -73,7 +73,7 @@ public class MainView {
         borderPane.setCenter(mainLayout);
         borderPane.setStyle("-fx-padding: 30px; -fx-background-color: #f0f0f0;");
 
-        return new Scene(borderPane, 800, 600); // ปรับขนาดหน้าจอเป็น 800x600
+        return new Scene(borderPane, 1024, 768); // ปรับขนาดหน้าจอเป็น 1024x768
     }
 
     private void showDeleteCategoryDialog() {

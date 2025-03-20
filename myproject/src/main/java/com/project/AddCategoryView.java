@@ -4,7 +4,6 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
@@ -25,20 +24,15 @@ public class AddCategoryView {
         categoryField.setPromptText("ชื่อหมวดหมู่");
         categoryField.setStyle("-fx-font-size: 14px; -fx-padding: 10px;");
 
-        Label typeLabel = new Label("ประเภท:");
-        ComboBox<String> typeComboBox = new ComboBox<>();
-        typeComboBox.getItems().addAll("รายรับ", "รายจ่าย");
-
         Button addButton = new Button("เพิ่มหมวดหมู่");
         addButton.setStyle("-fx-font-size: 14px; -fx-background-color: #4CAF50; -fx-text-fill: white;");
         addButton.setOnAction(e -> {
             String categoryName = categoryField.getText();
-            String categoryType = typeComboBox.getValue();
-            if (!categoryName.isEmpty() && categoryType != null) {
-                DatabaseHelper.addCategory(categoryName, categoryType.equals("รายรับ") ? "income" : "expense");
+            if (!categoryName.isEmpty()) {
+                DatabaseHelper.addCategory(categoryName);
                 controller.showMainView();
             } else {
-                showAlert("ข้อผิดพลาด", "กรุณากรอกชื่อหมวดหมู่และเลือกประเภท");
+                showAlert("ข้อผิดพลาด", "กรุณากรอกชื่อหมวดหมู่");
             }
         });
 
@@ -46,7 +40,7 @@ public class AddCategoryView {
         backButton.setStyle("-fx-font-size: 14px; -fx-background-color: #f44336; -fx-text-fill: white;");
         backButton.setOnAction(e -> controller.showMainView());
 
-        VBox layout = new VBox(15, title, categoryField, typeLabel, typeComboBox, addButton, backButton);
+        VBox layout = new VBox(15, title, categoryField, addButton, backButton);
         layout.setAlignment(Pos.CENTER);
         layout.setStyle("-fx-padding: 30px; -fx-background-color: #f0f0f0;");
 

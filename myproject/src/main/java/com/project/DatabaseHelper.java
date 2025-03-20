@@ -13,11 +13,9 @@ public class DatabaseHelper {
 
     static {
         users.add(new User("user", "password", "User", "Name", "user@example.com", "1234567890"));
-        categories.add(new ExpenseCategory("ค่าอาหาร", "expense"));
-        categories.add(new ExpenseCategory("ค่าที่พัก", "expense"));
-        categories.add(new ExpenseCategory("ค่าเดินทาง", "expense"));
-        categories.add(new ExpenseCategory("เงินเดือน", "income"));
-        categories.add(new ExpenseCategory("โบนัส", "income"));
+        categories.add(new ExpenseCategory("ค่าอาหาร"));
+        categories.add(new ExpenseCategory("ค่าที่พัก"));
+        categories.add(new ExpenseCategory("ค่าเดินทาง"));
     }
 
     // สร้างตารางฐานข้อมูลหากยังไม่มี
@@ -36,6 +34,16 @@ public class DatabaseHelper {
         return false;
     }
 
+    // ดึงข้อมูลผู้ใช้ตามชื่อผู้ใช้
+    public static User getUserByUsername(String username) {
+        for (User user : users) {
+            if (user.getUsername().equals(username)) {
+                return user;
+            }
+        }
+        return null;
+    }
+
     // ลงทะเบียนผู้ใช้ใหม่
     public static boolean registerUser(String username, String password, String firstName, String lastName, String email, String phoneNumber) {
         for (User user : users) {
@@ -48,8 +56,8 @@ public class DatabaseHelper {
     }
 
     // เพิ่มหมวดหมู่ค่าใช้จ่ายใหม่
-    public static void addCategory(String name, String type) {
-        categories.add(new ExpenseCategory(name, type));
+    public static void addCategory(String name) {
+        categories.add(new ExpenseCategory(name));
     }
 
     // ลบหมวดหมู่ค่าใช้จ่าย
@@ -72,31 +80,9 @@ public class DatabaseHelper {
         return new ArrayList<>(categories);
     }
 
-    // ดึงหมวดหมู่รายรับ
-    public static List<ExpenseCategory> getIncomeCategories() {
-        List<ExpenseCategory> incomeCategories = new ArrayList<>();
-        for (ExpenseCategory category : categories) {
-            if (category.getType().equals("income")) {
-                incomeCategories.add(category);
-            }
-        }
-        return incomeCategories;
-    }
-
-    // ดึงหมวดหมู่รายจ่าย
-    public static List<ExpenseCategory> getExpenseCategories() {
-        List<ExpenseCategory> expenseCategories = new ArrayList<>();
-        for (ExpenseCategory category : categories) {
-            if (category.getType().equals("expense")) {
-                expenseCategories.add(category);
-            }
-        }
-        return expenseCategories;
-    }
-
     // เพิ่มรายการค่าใช้จ่ายใหม่
-    public static void addExpense(String description, double amount, String category, LocalDate date, String type) {
-        expenses.add(new Expense(nextId++, description, amount, category, date, type));
+    public static void addExpense(String description, double amount, LocalDate date) {
+        expenses.add(new Expense(nextId++, description, amount, date));
     }
 
     // ดึงรายการค่าใช้จ่ายทั้งหมด
@@ -110,12 +96,11 @@ public class DatabaseHelper {
     }
 
     // แก้ไขรายการค่าใช้จ่ายตาม ID
-    public static boolean editExpense(int id, String newDescription, double newAmount, String newCategory, LocalDate newDate) {
+    public static boolean editExpense(int id, String newDescription, double newAmount, LocalDate newDate) {
         for (Expense expense : expenses) {
             if (expense.getId() == id) {
                 expense.setDescription(newDescription);
                 expense.setAmount(newAmount);
-                expense.setCategory(newCategory);
                 expense.setDate(newDate);
                 return true;
             }
@@ -127,7 +112,7 @@ public class DatabaseHelper {
     public static List<String> getAllExpensesList() {
         List<String> expenseStrings = new ArrayList<>();
         for (Expense expense : expenses) {
-            expenseStrings.add(expense.getId() + " - " + expense.getDescription() + " - " + expense.getAmount() + " - " + expense.getCategory() + " - " + expense.getDate() + " - " + (expense.getType().equals("income") ? "รายรับ" : "รายจ่าย"));
+            expenseStrings.add(expense.getId() + " - " + expense.getDescription() + " - " + expense.getAmount() + " - " + expense.getDate());
         }
         return expenseStrings;
     }

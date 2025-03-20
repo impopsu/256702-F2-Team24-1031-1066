@@ -2,6 +2,7 @@ package com.project;
 
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
@@ -23,12 +24,10 @@ public class LoginView {
         Label usernameLabel = new Label("ชื่อผู้ใช้:");
         TextField usernameField = new TextField();
         usernameField.setPromptText("ชื่อผู้ใช้");
-        usernameField.setStyle("-fx-font-size: 14px; -fx-padding: 10px;");
 
         Label passwordLabel = new Label("รหัสผ่าน:");
         PasswordField passwordField = new PasswordField();
         passwordField.setPromptText("รหัสผ่าน");
-        passwordField.setStyle("-fx-font-size: 14px; -fx-padding: 10px;");
 
         Button loginButton = new Button("เข้าสู่ระบบ");
         loginButton.setStyle("-fx-font-size: 14px; -fx-background-color: #4CAF50; -fx-text-fill: white;");
@@ -36,9 +35,9 @@ public class LoginView {
             String username = usernameField.getText();
             String password = passwordField.getText();
             if (controller.login(username, password)) {
-                controller.showMainView(); 
+                controller.showMainView();
             } else {
-                System.out.println("ข้อมูลไม่ถูกต้อง");
+                showAlert("ข้อผิดพลาด", "ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง");
             }
         });
 
@@ -47,9 +46,17 @@ public class LoginView {
         signUpButton.setOnAction(e -> controller.showSignUpView());
 
         VBox layout = new VBox(15, titleLabel, usernameLabel, usernameField, passwordLabel, passwordField, loginButton, signUpButton);
-        layout.setAlignment(Pos.CENTER_LEFT);
+        layout.setAlignment(Pos.CENTER);
         layout.setStyle("-fx-padding: 30px; -fx-background-color: #f0f0f0;");
 
-        return new Scene(layout, 800, 600); // ปรับขนาดหน้าจอเป็น 800x600
+        return new Scene(layout, 1024, 768); // ปรับขนาดหน้าจอเป็น 1024x768
+    }
+
+    private void showAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 }

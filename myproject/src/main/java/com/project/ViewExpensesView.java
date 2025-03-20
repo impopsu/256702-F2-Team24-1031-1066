@@ -32,10 +32,8 @@ public class ViewExpensesView {
                 int expenseId = Integer.parseInt(parts[0]);
                 String currentDescription = parts[1];
                 double currentAmount = Double.parseDouble(parts[2]);
-                String currentCategory = parts[3];
-                LocalDate currentDate = LocalDate.parse(parts[4]);
-                String currentType = parts[5];
-                controller.showEditExpenseView(expenseId, currentDescription, currentAmount, currentCategory, currentDate, currentType);
+                LocalDate currentDate = LocalDate.parse(parts[3]);
+                controller.showEditExpenseView(expenseId, currentDescription, currentAmount, currentDate);
             }
         });
 

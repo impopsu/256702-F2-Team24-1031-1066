@@ -7,6 +7,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.input.KeyEvent;
 
 public class UserProfileView {
 
@@ -37,9 +38,14 @@ public class UserProfileView {
         TextField emailField = new TextField(user.getEmail());
         emailField.setPromptText("อีเมล");
 
-        Label phoneNumberLabel = new Label("เบอร์โทรศัพท์:");
-        TextField phoneNumberField = new TextField(user.getPhoneNumber());
-        phoneNumberField.setPromptText("เบอร์โทรศัพท์");
+        Label phoneLabel = new Label("เบอร์โทรศัพท์:");
+        TextField phoneField = new TextField(user.getPhoneNumber());
+        phoneField.setPromptText("เบอร์โทรศัพท์");
+        phoneField.addEventFilter(KeyEvent.KEY_TYPED, event -> {
+            if (!event.getCharacter().matches("\\d") || phoneField.getText().length() >= 10) {
+                event.consume();
+            }
+        });
 
         Button saveButton = new Button("บันทึก");
         saveButton.setStyle("-fx-font-size: 14px; -fx-background-color: #4CAF50; -fx-text-fill: white;");
@@ -47,7 +53,7 @@ public class UserProfileView {
             user.setFirstName(firstNameField.getText());
             user.setLastName(lastNameField.getText());
             user.setEmail(emailField.getText());
-            user.setPhoneNumber(phoneNumberField.getText());
+            user.setPhoneNumber(phoneField.getText());
             controller.updateUserProfile(user);
         });
 
@@ -55,16 +61,10 @@ public class UserProfileView {
         backButton.setStyle("-fx-font-size: 14px; -fx-background-color: #f44336; -fx-text-fill: white;");
         backButton.setOnAction(e -> controller.showMainView());
 
-        VBox layout = new VBox(15, titleLabel,
-                new HBox(10, usernameLabel, usernameField),
-                new HBox(10, firstNameLabel, firstNameField),
-                new HBox(10, lastNameLabel, lastNameField),
-                new HBox(10, emailLabel, emailField),
-                new HBox(10, phoneNumberLabel, phoneNumberField),
-                saveButton, backButton);
-        layout.setAlignment(Pos.CENTER_LEFT);
+        VBox layout = new VBox(15, titleLabel, usernameLabel, usernameField, firstNameLabel, firstNameField, lastNameLabel, lastNameField, emailLabel, emailField, phoneLabel, phoneField, saveButton, backButton);
+        layout.setAlignment(Pos.CENTER);
         layout.setStyle("-fx-padding: 30px; -fx-background-color: #f0f0f0;");
 
-        return new Scene(layout, 800, 600); // ปรับขนาดหน้าจอเป็น 800x600
+        return new Scene(layout, 1024, 768); // ปรับขนาดหน้าจอเป็น 1024x768
     }
 }
