@@ -46,8 +46,14 @@ public class AddExpenseView {
                 String description = descriptionField.getText();
                 double amount = Double.parseDouble(amountField.getText());
                 LocalDate date = datePicker.getValue();
+                String category = categoryComboBox.getValue(); // ดึงค่าหมวดหมู่ที่เลือก
 
-                DatabaseHelper.addExpense(description, amount, date);
+                if (category == null || category.isEmpty()) {
+                    showAlert("ข้อผิดพลาด", "กรุณาเลือกหมวดหมู่");
+                    return;
+                }
+
+                DatabaseHelper.addExpense(description, amount, date, category); // เพิ่มหมวดหมู่
                 controller.checkBudget(); // ตรวจสอบงบประมาณหลังเพิ่มรายการ
                 controller.showMainView();
             } catch (NumberFormatException ex) {

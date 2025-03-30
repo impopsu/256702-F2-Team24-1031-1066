@@ -30,9 +30,7 @@ public class MainView {
 
         Button viewExpensesButton = new Button("ดูรายการค่าใช้จ่าย");
         viewExpensesButton.setStyle("-fx-font-size: 16px; -fx-background-color: #2196F3; -fx-text-fill: white;");
-        viewExpensesButton.setOnAction(e -> {
-            controller.showViewExpensesView();
-        });
+        viewExpensesButton.setOnAction(e -> controller.showViewExpensesView());
 
         Button addCategoryButton = new Button("เพิ่มหมวดหมู่ใหม่");
         addCategoryButton.setStyle("-fx-font-size: 16px; -fx-background-color: #FF9800; -fx-text-fill: white;");

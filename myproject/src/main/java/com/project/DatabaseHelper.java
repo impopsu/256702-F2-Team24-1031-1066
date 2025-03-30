@@ -85,9 +85,23 @@ public class DatabaseHelper {
         expenses.add(new Expense(nextId++, description, amount, date));
     }
 
+    public static void addExpense(String description, double amount, LocalDate date, String category) {
+        expenses.add(new Expense(nextId++, description, amount, date, category)); // เพิ่มหมวดหมู่
+    }
+
     // ดึงรายการค่าใช้จ่ายทั้งหมด
     public static List<Expense> getAllExpenses() {
-        return new ArrayList<>(expenses);
+        List<Expense> expensesList = new ArrayList<>();
+        for (Expense expense : expenses) {
+            expensesList.add(new Expense(
+                expense.getId(),
+                expense.getDescription(),
+                expense.getAmount(),
+                expense.getDate(),
+                expense.getCategory() // เพิ่มหมวดหมู่
+            ));
+        }
+        return expensesList;
     }
 
     // ลบรายการค่าใช้จ่ายตาม ID

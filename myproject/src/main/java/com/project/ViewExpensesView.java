@@ -39,7 +39,11 @@ public class ViewExpensesView {
         TableColumn<Expense, LocalDate> dateColumn = new TableColumn<>("วันที่");
         dateColumn.setCellValueFactory(cellData -> cellData.getValue().dateProperty());
 
-        tableView.getColumns().addAll(idColumn, descriptionColumn, amountColumn, dateColumn);
+        // เพิ่มคอลัมน์หมวดหมู่
+        TableColumn<Expense, String> categoryColumn = new TableColumn<>("หมวดหมู่");
+        categoryColumn.setCellValueFactory(cellData -> cellData.getValue().categoryProperty());
+
+        tableView.getColumns().addAll(idColumn, descriptionColumn, amountColumn, dateColumn, categoryColumn);
 
         List<Expense> expenses = DatabaseHelper.getAllExpenses();
         tableView.getItems().addAll(expenses);
