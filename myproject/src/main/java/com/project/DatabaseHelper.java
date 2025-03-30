@@ -131,4 +131,17 @@ public class DatabaseHelper {
             }
         }
     }
+
+    public static double getTotalExpensesForCurrentMonth() {
+        LocalDate now = LocalDate.now();
+        double total = 0.0;
+
+        for (Expense expense : expenses) {
+            if (expense.getDate().getYear() == now.getYear() && expense.getDate().getMonth() == now.getMonth()) {
+                total += expense.getAmount();
+            }
+        }
+
+        return total;
+    }
 }

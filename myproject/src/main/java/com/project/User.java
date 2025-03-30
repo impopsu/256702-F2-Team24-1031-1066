@@ -7,6 +7,7 @@ public class User {
     private String lastName;
     private String email;
     private String phoneNumber;
+    private double monthlyBudget; // เพิ่มฟิลด์งบประมาณรายเดือน
 
     public User(String username, String password, String firstName, String lastName, String email, String phoneNumber) {
         this.username = username;
@@ -15,6 +16,7 @@ public class User {
         this.lastName = lastName;
         this.email = email;
         this.phoneNumber = phoneNumber;
+        this.monthlyBudget = 0.0; // ค่าเริ่มต้นของงบประมาณ
     }
 
     public String getUsername() {
@@ -55,5 +57,13 @@ public class User {
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
+    }
+
+    public double getMonthlyBudget() {
+        return monthlyBudget;
+    }
+
+    public void setMonthlyBudget(double monthlyBudget) {
+        this.monthlyBudget = monthlyBudget;
     }
 }

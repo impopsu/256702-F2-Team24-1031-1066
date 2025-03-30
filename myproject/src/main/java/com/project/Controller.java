@@ -1,5 +1,6 @@
 package com.project;
 
+import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 
 import java.time.LocalDate;
@@ -100,6 +101,25 @@ public class Controller {
 
     public boolean register(String username, String password, String firstName, String lastName, String email, String phoneNumber) {
         return DatabaseHelper.registerUser(username, password, firstName, lastName, email, phoneNumber);
+    }
+
+    public void checkBudget() {
+        if (currentUser != null) {
+            double totalExpenses = DatabaseHelper.getTotalExpensesForCurrentMonth();
+            double budget = currentUser.getMonthlyBudget();
+
+            if (budget > 0 && totalExpenses > budget) {
+                showAlert("แจ้งเตือน", "คุณใช้จ่ายเกินงบประมาณที่ตั้งไว้แล้ว!");
+            }
+        }
+    }
+
+    private void showAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 }
 

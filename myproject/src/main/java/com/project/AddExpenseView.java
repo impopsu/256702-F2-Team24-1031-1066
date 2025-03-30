@@ -42,22 +42,16 @@ public class AddExpenseView {
         Button saveButton = new Button("บันทึก");
         saveButton.setStyle("-fx-font-size: 14px; -fx-background-color: #4CAF50; -fx-text-fill: white;");
         saveButton.setOnAction(e -> {
-            String description = descriptionField.getText();
-            String amountText = amountField.getText();
-            LocalDate date = datePicker.getValue();
-            String selectedCategory = categoryComboBox.getValue();
-
-            if (description.isEmpty() || amountText.isEmpty() || date == null || selectedCategory == null) {
-                showAlert("ข้อผิดพลาด", "กรุณากรอกข้อมูลให้ครบถ้วน");
-                return;
-            }
-
             try {
-                double amount = Double.parseDouble(amountText);
-                controller.addExpense(description, amount, date); // หมวดหมู่สามารถเพิ่มในฐานข้อมูลได้หากจำเป็น
-                controller.showViewExpensesView();
+                String description = descriptionField.getText();
+                double amount = Double.parseDouble(amountField.getText());
+                LocalDate date = datePicker.getValue();
+
+                DatabaseHelper.addExpense(description, amount, date);
+                controller.checkBudget(); // ตรวจสอบงบประมาณหลังเพิ่มรายการ
+                controller.showMainView();
             } catch (NumberFormatException ex) {
-                showAlert("ข้อผิดพลาด", "กรุณากรอกจำนวนเงินให้ถูกต้อง");
+                showAlert("ข้อผิดพลาด", "กรุณากรอกจำนวนเงินเป็นตัวเลข");
             }
         });
 
