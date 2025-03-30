@@ -35,11 +35,26 @@ public class ManageCategoriesView {
         deleteButton.setOnAction(e -> {
             String selectedCategory = categoryListView.getSelectionModel().getSelectedItem();
             if (selectedCategory != null) {
-                DatabaseHelper.deleteCategory(selectedCategory);
-                categoryListView.getItems().remove(selectedCategory);
-                showAlert("สำเร็จ", "ลบหมวดหมู่เรียบร้อย!");
+                // แสดงการยืนยันก่อนลบ
+                Alert confirmationAlert = new Alert(Alert.AlertType.CONFIRMATION);
+                confirmationAlert.setTitle("ยืนยันการลบ");
+                confirmationAlert.setHeaderText(null);
+                confirmationAlert.setContentText("คุณต้องการลบหมวดหมู่ \"" + selectedCategory + "\" ใช่หรือไม่?");
+                
+                Optional<ButtonType> result = confirmationAlert.showAndWait();
+                if (result.isPresent() && result.get() == ButtonType.OK) {
+                    // ลบหมวดหมู่จากฐานข้อมูล
+                    DatabaseHelper.deleteCategory(selectedCategory);
+
+                    // อัปเดต ListView
+                    categoryListView.getItems().remove(selectedCategory);
+
+                    // แสดงข้อความแจ้งเตือน
+                    showAlert("สำเร็จ", "หมวดหมู่ \"" + selectedCategory + "\" ถูกลบเรียบร้อยแล้ว");
+                }
             } else {
-                showAlert("ผิดพลาด", "กรุณาเลือกหมวดหมู่ที่ต้องการลบ");
+                // แสดงข้อความแจ้งเตือนหากไม่มีการเลือกหมวดหมู่
+                showAlert("ข้อผิดพลาด", "กรุณาเลือกหมวดหมู่ที่ต้องการลบ");
             }
         });
 

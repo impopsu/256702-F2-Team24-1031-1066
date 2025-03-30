@@ -121,5 +121,9 @@ public class Controller {
         alert.setContentText(message);
         alert.showAndWait();
     }
+
+    public User getCurrentUser() {
+        return currentUser;
+    }
 }
 

@@ -5,9 +5,12 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
+
+import java.util.List;
 
 public class MainView {
 
@@ -22,11 +25,14 @@ public class MainView {
         layout.setAlignment(Pos.CENTER);
         layout.setStyle("-fx-padding: 30px; -fx-background-color: #f0f0f0;");
 
+        // แสดงยอดรวมรายรับ-รายจ่าย และคงเหลือ
+        Label summaryLabel = new Label();
+        summaryLabel.setStyle("-fx-font-size: 18px; -fx-text-fill: #333;");
+        updateSummary(summaryLabel);
+
         Button addExpenseButton = new Button("เพิ่มค่าใช้จ่าย");
         addExpenseButton.setStyle("-fx-font-size: 16px; -fx-background-color: #4CAF50; -fx-text-fill: white;");
-        addExpenseButton.setOnAction(e -> {
-            controller.showAddExpenseView();
-        });
+        addExpenseButton.setOnAction(e -> controller.showAddExpenseView());
 
         Button viewExpensesButton = new Button("ดูรายการค่าใช้จ่าย");
         viewExpensesButton.setStyle("-fx-font-size: 16px; -fx-background-color: #2196F3; -fx-text-fill: white;");
@@ -34,9 +40,7 @@ public class MainView {
 
         Button addCategoryButton = new Button("เพิ่มหมวดหมู่ใหม่");
         addCategoryButton.setStyle("-fx-font-size: 16px; -fx-background-color: #FF9800; -fx-text-fill: white;");
-        addCategoryButton.setOnAction(e -> {
-            controller.showAddCategoryView();
-        });
+        addCategoryButton.setOnAction(e -> controller.showAddCategoryView());
 
         Button deleteCategoryButton = new Button("ลบหมวดหมู่");
         deleteCategoryButton.setStyle("-fx-font-size: 16px; -fx-background-color: #FF9800; -fx-text-fill: white;");
@@ -62,7 +66,7 @@ public class MainView {
             controller.logout();
         });
 
-        VBox mainLayout = new VBox(20, addExpenseButton, viewExpensesButton, addCategoryButton, deleteCategoryButton, searchExpensesButton, profileButton, logoutButton);
+        VBox mainLayout = new VBox(20, summaryLabel, addExpenseButton, viewExpensesButton, addCategoryButton, deleteCategoryButton, searchExpensesButton, profileButton, logoutButton);
         mainLayout.setAlignment(Pos.CENTER);
 
         layout.getChildren().addAll(mainLayout);
@@ -72,6 +76,18 @@ public class MainView {
         borderPane.setStyle("-fx-padding: 30px; -fx-background-color: #f0f0f0;");
 
         return new Scene(borderPane, 1024, 768); // ปรับขนาดหน้าจอเป็น 1024x768
+    }
+
+    private void updateSummary(Label summaryLabel) {
+        List<Expense> expenses = DatabaseHelper.getAllExpenses();
+        double totalExpenses = expenses.stream().mapToDouble(Expense::getAmount).sum();
+        double monthlyBudget = controller.getCurrentUser().getMonthlyBudget();
+        double remainingBudget = monthlyBudget - totalExpenses;
+
+        summaryLabel.setText(String.format(
+            "ยอดรวมรายจ่าย: %.2f บาท\nงบประมาณรายเดือน: %.2f บาท\nคงเหลือ: %.2f บาท",
+            totalExpenses, monthlyBudget, remainingBudget
+        ));
     }
 
     private void showDeleteCategoryDialog() {
