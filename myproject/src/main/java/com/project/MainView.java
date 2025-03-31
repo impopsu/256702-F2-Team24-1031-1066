@@ -10,6 +10,8 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 
+import java.util.List;
+
 public class MainView {
 
     private Controller controller;
@@ -22,13 +24,30 @@ public class MainView {
         // Layout หลัก
         VBox layout = new VBox(20);
         layout.setAlignment(Pos.CENTER);
-        layout.setStyle("-fx-padding: 30px; " +
-                "-fx-background-color:rgb(21, 27, 87);"); // พื้นหลังสีชมพูอ่อน (Mistly Rose)
+        layout.setStyle("-fx-padding: 30px; -fx-background-color:rgb(21, 27, 87);");
 
         // Header
         Label headerLabel = new Label("@PersonalExpenseTracker");
         headerLabel.setFont(new Font("Arial", 24));
-        headerLabel.setStyle("-fx-text-fill:rgb(248, 247, 247);"); // สีข้อความเป็นสีเขียวเข้ม (Sea Green)
+        headerLabel.setStyle("-fx-text-fill:rgb(248, 247, 247);");
+
+        // ดึงข้อมูลยอดรวมค่าใช้จ่าย, งบประมาณ และคงเหลือ
+        List<Expense> expenses = DatabaseHelper.getAllExpenses();
+        double totalExpense = expenses.stream().mapToDouble(Expense::getAmount).sum();
+        double budget = controller.getCurrentUser().getMonthlyBudget();
+        double balance = budget - totalExpense;
+
+        // แสดงยอดรวมค่าใช้จ่าย
+        Label totalExpenseLabel = new Label("ยอดรวมค่าใช้จ่าย: " + String.format("%.2f", totalExpense) + " บาท");
+        totalExpenseLabel.setStyle("-fx-font-size: 16px; -fx-text-fill: #F44336;");
+
+        // แสดงงบประมาณ
+        Label budgetLabel = new Label("งบประมาณ: " + String.format("%.2f", budget) + " บาท");
+        budgetLabel.setStyle("-fx-font-size: 16px; -fx-text-fill: #4CAF50;");
+
+        // แสดงยอดคงเหลือ
+        Label balanceLabel = new Label("ยอดคงเหลือ: " + String.format("%.2f", balance) + " บาท");
+        balanceLabel.setStyle("-fx-font-size: 16px; -fx-text-fill: #FFFFFF;");
 
         // ปุ่มต่างๆ พร้อมอิโมติคอน
         Button addExpenseButton = createStyledButton("➕ เพิ่มค่าใช้จ่าย");
@@ -78,11 +97,11 @@ public class MainView {
         buttonGrid.add(searchExpensesButton, 0, 2);
         buttonGrid.add(profileButton, 1, 2);
         buttonGrid.add(budgetButton, 0, 3);
-        buttonGrid.add(logoutButton, 1, 3);
-        buttonGrid.add(summaryButton, 0, 4); // เพิ่มปุ่มในตำแหน่งใหม่
+        buttonGrid.add(summaryButton, 1, 3);
+        buttonGrid.add(logoutButton, 0, 4);
 
-        // เพิ่ม Header และ GridPane ลงใน Layout หลัก
-        layout.getChildren().addAll(headerLabel, buttonGrid);
+        // เพิ่ม Header, ข้อมูลยอดรวม และ GridPane ลงใน Layout หลัก
+        layout.getChildren().addAll(headerLabel, totalExpenseLabel, budgetLabel, balanceLabel, buttonGrid);
 
         // สร้าง Scene และส่งกลับ (ขนาดหน้าจอ 800x600)
         return new Scene(layout, 800, 600);

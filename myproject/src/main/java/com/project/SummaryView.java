@@ -2,14 +2,20 @@ package com.project;
 
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.chart.PieChart;
+import javafx.scene.chart.XYChart;
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.CategoryAxis;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class SummaryView {
 
@@ -29,62 +35,63 @@ public class SummaryView {
         headerLabel.setFont(new Font("Arial", 24));
         headerLabel.setStyle("-fx-text-fill: #333333;");
 
-        // ตารางแสดงรายการรายจ่ายย้อนหลัง
-        TableView<Expense> tableView = new TableView<>();
-        tableView.setPrefWidth(600);
+        // กราฟแสดงการใช้จ่ายรายวัน
+        LineChart<String, Number> dailyChart = createDailyExpenseChart();
 
-        TableColumn<Expense, String> descriptionColumn = new TableColumn<>("คำอธิบาย");
-        descriptionColumn.setCellValueFactory(data -> data.getValue().descriptionProperty());
-        descriptionColumn.setPrefWidth(200);
-
-        TableColumn<Expense, Double> amountColumn = new TableColumn<>("จำนวนเงิน");
-        amountColumn.setCellValueFactory(data -> data.getValue().amountProperty().asObject());
-        amountColumn.setPrefWidth(100);
-
-        TableColumn<Expense, String> categoryColumn = new TableColumn<>("หมวดหมู่");
-        categoryColumn.setCellValueFactory(data -> data.getValue().categoryProperty());
-        categoryColumn.setPrefWidth(150);
-
-        TableColumn<Expense, String> dateColumn = new TableColumn<>("วันที่");
-        dateColumn.setCellValueFactory(data -> data.getValue().dateProperty().asString());
-        dateColumn.setPrefWidth(150);
-
-        tableView.getColumns().addAll(descriptionColumn, amountColumn, categoryColumn, dateColumn);
-
-        // ดึงข้อมูลจากฐานข้อมูล
-        List<Expense> expenses = DatabaseHelper.getAllExpenses();
-        tableView.getItems().addAll(expenses);
-
-        // คำนวณยอดรวมรายจ่าย
-        double totalExpense = expenses.stream()
-                .mapToDouble(Expense::getAmount)
-                .sum();
-
-        // ดึงงบประมาณปัจจุบันของผู้ใช้
-        double budget = controller.getCurrentUser().getMonthlyBudget();
-
-        // คำนวณยอดคงเหลือ
-        double balance = budget - totalExpense;
-
-        // แสดงยอดรวมรายจ่าย
-        Label expenseLabel = new Label("ยอดรวมรายจ่าย: " + String.format("%.2f", totalExpense) + " บาท");
-        expenseLabel.setStyle("-fx-font-size: 16px; -fx-text-fill: #F44336;");
-
-        // แสดงงบประมาณ
-        Label budgetLabel = new Label("งบประมาณ: " + String.format("%.2f", budget) + " บาท");
-        budgetLabel.setStyle("-fx-font-size: 16px; -fx-text-fill: #4CAF50;");
-
-        // แสดงยอดคงเหลือ
-        Label balanceLabel = new Label("ยอดคงเหลือ: " + String.format("%.2f", balance) + " บาท");
-        balanceLabel.setStyle("-fx-font-size: 16px; -fx-text-fill: #333333;");
+        // กราฟแสดงการใช้จ่ายแยกตามหมวดหมู่
+        PieChart categoryChart = createCategoryExpenseChart();
 
         // ปุ่มกลับไปหน้าหลัก
         Button backButton = new Button("⬅️ กลับ");
         backButton.setStyle("-fx-font-size: 16px; -fx-background-color: #F4C542; -fx-text-fill: #333333;");
         backButton.setOnAction(e -> controller.showMainView());
 
-        layout.getChildren().addAll(headerLabel, tableView, expenseLabel, budgetLabel, balanceLabel, backButton);
+        layout.getChildren().addAll(headerLabel, dailyChart, categoryChart, backButton);
 
         return new Scene(layout, 800, 600);
+    }
+
+    private LineChart<String, Number> createDailyExpenseChart() {
+        // แกน X และ Y
+        CategoryAxis xAxis = new CategoryAxis();
+        xAxis.setLabel("วันที่");
+
+        NumberAxis yAxis = new NumberAxis();
+        yAxis.setLabel("จำนวนเงิน (บาท)");
+
+        LineChart<String, Number> lineChart = new LineChart<>(xAxis, yAxis);
+        lineChart.setTitle("การใช้จ่ายรายวัน");
+
+        // ดึงข้อมูลการใช้จ่ายรายวัน
+        List<Expense> expenses = DatabaseHelper.getAllExpenses();
+        Map<LocalDate, Double> dailyExpenses = expenses.stream()
+                .collect(Collectors.groupingBy(Expense::getDate, Collectors.summingDouble(Expense::getAmount)));
+
+        XYChart.Series<String, Number> series = new XYChart.Series<>();
+        series.setName("การใช้จ่ายรายวัน");
+
+        dailyExpenses.forEach((date, amount) -> {
+            series.getData().add(new XYChart.Data<>(date.toString(), amount));
+        });
+
+        lineChart.getData().add(series);
+        return lineChart;
+    }
+
+    private PieChart createCategoryExpenseChart() {
+        PieChart pieChart = new PieChart();
+        pieChart.setTitle("การใช้จ่ายแยกตามหมวดหมู่");
+
+        // ดึงข้อมูลการใช้จ่ายแยกตามหมวดหมู่
+        List<Expense> expenses = DatabaseHelper.getAllExpenses();
+        Map<String, Double> categoryExpenses = expenses.stream()
+                .collect(Collectors.groupingBy(Expense::getCategory, Collectors.summingDouble(Expense::getAmount)));
+
+        categoryExpenses.forEach((category, amount) -> {
+            PieChart.Data slice = new PieChart.Data(category, amount);
+            pieChart.getData().add(slice);
+        });
+
+        return pieChart;
     }
 }
