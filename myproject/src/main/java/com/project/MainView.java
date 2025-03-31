@@ -26,17 +26,17 @@ public class MainView {
         VBox layout = new VBox(20);
         layout.setAlignment(Pos.CENTER);
         layout.setStyle("-fx-padding: 30px; " +
-                "-fx-background-color: #FFE4E1;"); // พื้นหลังสีชมพูอ่อน (Mistly Rose)
+                "-fx-background-color:rgb(188, 57, 118);"); // พื้นหลังสีชมพูอ่อน (Mistly Rose)
 
         // Header
         Label headerLabel = new Label("@PersonalExpenseTracker");
         headerLabel.setFont(new Font("Arial", 24));
-        headerLabel.setStyle("-fx-text-fill:rgb(24, 111, 62);"); // สีข้อความเป็นสีเขียวเข้ม (Sea Green)
+        headerLabel.setStyle("-fx-text-fill:rgb(16, 16, 16);"); // สีข้อความเป็นสีเขียวเข้ม (Sea Green)
 
         // แสดงยอดรวมรายรับ-รายจ่าย และคงเหลือ
         summaryLabel = new Label("ยอดรวมรายจ่าย: 0.00 บาท\nงบประมาณรายเดือน: 0.00 บาท\nคงเหลือ: 0.00 บาท");
         summaryLabel.setFont(new Font("Arial", 18));
-        summaryLabel.setStyle("-fx-text-fill:rgb(37, 111, 69);"); // สีข้อความเป็นสีเขียวเข้ม (Sea Green)
+        summaryLabel.setStyle("-fx-text-fill:rgb(17, 18, 18);"); // สีข้อความเป็นสีเขียวเข้ม (Sea Green)
         summaryLabel.setAlignment(Pos.CENTER);
 
         // ปุ่มต่างๆ พร้อมอิโมติคอน
@@ -113,8 +113,8 @@ public class MainView {
     private Button createStyledButton(String text) {
         Button button = new Button(text);
         button.setStyle("-fx-font-size: 16px; " +
-                "-fx-background-color: #98FB98; " + // สีเขียวอ่อน (Pale Green)
-                "-fx-text-fill: #FFFFFF; " + // ตัวอักษรสีขาว
+                "-fx-background-color:rgb(113, 189, 113); " + // สีเขียวอ่อน (Pale Green)
+                "-fx-text-fill:rgb(22, 22, 22); " + // ตัวอักษรสีขาว
                 "-fx-padding: 10px 20px; " +
                 "-fx-border-radius: 5px; " +
                 "-fx-background-radius: 5px;");
