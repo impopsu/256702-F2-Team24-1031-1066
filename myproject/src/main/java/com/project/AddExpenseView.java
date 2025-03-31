@@ -69,6 +69,7 @@ public class AddExpenseView {
                 }
 
                 controller.addExpense(description, amount, date, category);
+                controller.checkBudgetExceeded(); // ตรวจสอบการใช้จ่ายเกินงบประมาณ
                 controller.showMainView(); // กลับไปหน้าหลักหลังบันทึก
             } catch (NumberFormatException ex) {
                 controller.showAlert("ข้อผิดพลาด", "กรุณาใส่จำนวนเงินที่ถูกต้อง");
@@ -81,5 +82,13 @@ public class AddExpenseView {
         layout.getChildren().addAll(headerLabel, descriptionField, amountField, dateLabel, datePicker, categoryLabel, categoryComboBox, saveButton, backButton);
 
         return new Scene(layout, 800, 600);
+    }
+
+    private void showAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 }

@@ -5,6 +5,7 @@ import javafx.stage.Stage;
 import javafx.scene.Scene;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public class Controller {
 
@@ -170,5 +171,19 @@ public class Controller {
         SummaryView summaryView = new SummaryView(this);
         stage.setScene(summaryView.createSummaryScene());
         stage.show();
+    }
+
+    public void checkBudgetExceeded() {
+        // ดึงข้อมูลยอดรวมค่าใช้จ่าย
+        List<Expense> expenses = DatabaseHelper.getAllExpenses();
+        double totalExpense = expenses.stream().mapToDouble(Expense::getAmount).sum();
+
+        // ดึงงบประมาณของผู้ใช้
+        double budget = getCurrentUser().getMonthlyBudget();
+
+        // ตรวจสอบว่ามียอดใช้จ่ายเกินงบประมาณหรือไม่
+        if (totalExpense > budget) {
+            showAlert("แจ้งเตือน", "คุณใช้จ่ายเกินงบประมาณที่ตั้งไว้แล้ว!");
+        }
     }
 }
