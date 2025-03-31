@@ -13,7 +13,6 @@ import javafx.scene.text.Font;
 public class MainView {
 
     private Controller controller;
-    private Label summaryLabel; // ย้าย summaryLabel มาเป็นตัวแปรระดับคลาส
 
     public MainView(Controller controller) {
         this.controller = controller;
@@ -30,12 +29,6 @@ public class MainView {
         Label headerLabel = new Label("@PersonalExpenseTracker");
         headerLabel.setFont(new Font("Arial", 24));
         headerLabel.setStyle("-fx-text-fill:rgb(248, 247, 247);"); // สีข้อความเป็นสีเขียวเข้ม (Sea Green)
-
-        // แสดงยอดรวมรายรับ-รายจ่าย และคงเหลือ
-        summaryLabel = new Label("ยอดรวมรายจ่าย: 0.00 บาท\nงบประมาณ: 0.00 บาท\nคงเหลือ: 0.00 บาท");
-        summaryLabel.setFont(new Font("Arial", 18));
-        summaryLabel.setStyle("-fx-text-fill:rgb(253, 254, 254);"); // สีข้อความเป็นสีเขียวเข้ม (Sea Green)
-        summaryLabel.setAlignment(Pos.CENTER);
 
         // ปุ่มต่างๆ พร้อมอิโมติคอน
         Button addExpenseButton = createStyledButton("➕ เพิ่มค่าใช้จ่าย");
@@ -68,17 +61,6 @@ public class MainView {
         Button logoutButton = createStyledButton("➡️ ออกจากระบบ");
         logoutButton.setOnAction(e -> controller.logout());
 
-        // เพิ่มปุ่มสำหรับแสดงข้อความใน Alert Dialog
-        Button showSummaryButton = createStyledButton("📊 แสดงข้อมูลสรุป");
-        showSummaryButton.setOnAction(e -> {
-            // สร้าง Alert Dialog
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("ข้อมูลสรุป");
-            alert.setHeaderText("ข้อมูลยอดรวมรายจ่ายและงบประมาณ");
-            alert.setContentText(summaryLabel.getText()); // ใช้ข้อความจาก summaryLabel
-            alert.showAndWait();
-        });
-
         // จัดเรียงปุ่มใน GridPane
         GridPane buttonGrid = new GridPane();
         buttonGrid.setHgap(15); // ระยะห่างแนวนอนระหว่างปุ่ม (ค่าเดิม)
@@ -94,22 +76,12 @@ public class MainView {
         buttonGrid.add(profileButton, 1, 2);
         buttonGrid.add(budgetButton, 0, 3);
         buttonGrid.add(logoutButton, 1, 3);
-        buttonGrid.add(showSummaryButton, 0, 4); // เพิ่มปุ่มในตำแหน่งใหม่ (แถวที่ 4 คอลัมน์ที่ 0)
 
-        // เพิ่ม Header, Summary และ GridPane ลงใน Layout หลัก
-        layout.getChildren().addAll(headerLabel, summaryLabel, buttonGrid);
+        // เพิ่ม Header และ GridPane ลงใน Layout หลัก
+        layout.getChildren().addAll(headerLabel, buttonGrid);
 
         // สร้าง Scene และส่งกลับ (ขนาดหน้าจอ 800x600)
         return new Scene(layout, 800, 600);
-    }
-
-    // เมธอดสำหรับอัปเดตข้อความใน summaryLabel
-    public void updateSummary(double totalExpenses, double monthlyBudget) {
-        double remainingBudget = monthlyBudget - totalExpenses;
-        summaryLabel.setText(String.format(
-            "ยอดรวมรายจ่าย: %.2f บาท\nงบประมาณ: %.2f บาท\nคงเหลือ: %.2f บาท",
-            totalExpenses, monthlyBudget, remainingBudget
-        ));
     }
 
     private void showDeleteCategoryDialog() {

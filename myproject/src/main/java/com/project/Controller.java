@@ -140,9 +140,6 @@ public class Controller {
             // ดึงยอดรวมรายจ่ายใหม่
             double totalExpenses = DatabaseHelper.getTotalExpensesForCurrentMonth();
 
-            // อัปเดตข้อมูลใน MainView
-            mainView.updateSummary(totalExpenses, newBudget);
-
             showAlert("สำเร็จ", "งบประมาณถูกอัปเดตเรียบร้อยแล้ว");
         } else {
             showAlert("ข้อผิดพลาด", "ไม่สามารถอัปเดตงบประมาณได้");
@@ -167,7 +164,5 @@ public class Controller {
         System.out.println("งบประมาณ: " + monthlyBudget);
         System.out.println("คงเหลือ: " + remainingBudget);
 
-        // เรียกใช้ updateSummary ใน MainView
-        mainView.updateSummary(totalExpenses, monthlyBudget);
     }
 }
