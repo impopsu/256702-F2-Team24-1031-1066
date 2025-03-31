@@ -8,6 +8,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 
 public class UserProfileView {
 
@@ -18,8 +19,13 @@ public class UserProfileView {
     }
 
     public Scene createUserProfileScene(User user) {
-        Label titleLabel = new Label("โปรไฟล์ผู้ใช้");
-        titleLabel.setStyle("-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #333;");
+        VBox layout = new VBox(20);
+        layout.setAlignment(Pos.CENTER);
+        layout.setStyle("-fx-padding: 30px; -fx-background-color: #FAF3E0;");
+
+        Label headerLabel = new Label("โปรไฟล์ผู้ใช้");
+        headerLabel.setFont(new Font("Arial", 24));
+        headerLabel.setStyle("-fx-text-fill: #333333;");
 
         Label usernameLabel = new Label("ชื่อผู้ใช้:");
         TextField usernameField = new TextField(user.getUsername());
@@ -68,15 +74,12 @@ public class UserProfileView {
             }
         });
 
-        Button backButton = new Button("ย้อนกลับ");
-        backButton.setStyle("-fx-font-size: 14px; -fx-background-color: #f44336; -fx-text-fill: white;");
-        backButton.setOnAction(e -> controller.showMainView());
+        Button backButton = new Button("⬅️ กลับ");
+        backButton.setOnAction(e -> controller.showMainView()); // กลับไปหน้าหลัก
 
-        VBox layout = new VBox(15, titleLabel, usernameLabel, usernameField, firstNameLabel, firstNameField, lastNameLabel, lastNameField, emailLabel, emailField, phoneLabel, phoneField, budgetLabel, budgetField, saveButton, backButton);
-        layout.setAlignment(Pos.CENTER);
-        layout.setStyle("-fx-padding: 30px; -fx-background-color: #f0f0f0;");
+        layout.getChildren().addAll(headerLabel, usernameLabel, usernameField, firstNameLabel, firstNameField, lastNameLabel, lastNameField, emailLabel, emailField, phoneLabel, phoneField, budgetLabel, budgetField, saveButton, backButton);
 
-        return new Scene(layout, 1024, 768); // ปรับขนาดหน้าจอเป็น 1024x768
+        return new Scene(layout, 800, 600);
     }
 
     private void showAlert(String title, String message) {

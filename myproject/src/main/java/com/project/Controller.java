@@ -2,6 +2,8 @@ package com.project;
 
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
 
 import java.time.LocalDate;
 
@@ -9,9 +11,13 @@ public class Controller {
 
     private Stage stage;
     private User currentUser;
+    private MainView mainView;
+    private BudgetView budgetView;
 
     public Controller(Stage stage) {
         this.stage = stage;
+        this.mainView = new MainView(this);
+        this.budgetView = new BudgetView(this);
     }
 
     public void start() {
@@ -19,18 +25,20 @@ public class Controller {
     }
 
     public void showMainView() {
-        MainView mainView = new MainView(this);
-        stage.setScene(mainView.createMainScene());
+        Scene scene = mainView.createMainScene();
+        stage.setScene(scene);
         stage.show();
     }
 
     public void showAddExpenseView() {
+        System.out.println("แสดงหน้าจอเพิ่มค่าใช้จ่าย"); // Debugging
         AddExpenseView addExpenseView = new AddExpenseView(this);
         stage.setScene(addExpenseView.createAddExpenseScene());
         stage.show();
     }
 
     public void showViewExpensesView() {
+        System.out.println("แสดงหน้าจอดูรายการค่าใช้จ่าย"); // Debugging
         ViewExpensesView viewExpensesView = new ViewExpensesView(this);
         stage.setScene(viewExpensesView.createViewExpensesScene());
         stage.show();
@@ -43,7 +51,17 @@ public class Controller {
     }
 
     public void addExpense(String description, double amount, LocalDate date) {
+        // เพิ่มค่าใช้จ่ายลงในฐานข้อมูล
         DatabaseHelper.addExpense(description, amount, date);
+
+        // ดึงยอดรวมรายจ่ายใหม่จากฐานข้อมูล
+        double totalExpenses = DatabaseHelper.getTotalExpensesForCurrentMonth();
+
+        // ดึงงบประมาณรายเดือนของผู้ใช้ปัจจุบัน
+        double monthlyBudget = currentUser.getMonthlyBudget();
+
+        // อัปเดตข้อมูลใน MainView
+        mainView.updateSummary(totalExpenses, monthlyBudget);
     }
 
     public void editExpense(int expenseId, String newDescription, double newAmount, LocalDate newDate) {
@@ -52,21 +70,30 @@ public class Controller {
     }
 
     public void showAddCategoryView() {
+        System.out.println("แสดงหน้าจอเพิ่มหมวดหมู่ใหม่"); // Debugging
         AddCategoryView addCategoryView = new AddCategoryView(this);
         stage.setScene(addCategoryView.createAddCategoryScene());
         stage.show();
     }
 
     public void showSearchExpensesView() {
+        System.out.println("แสดงหน้าจอค้นหารายการค่าใช้จ่าย"); // Debugging
         SearchExpensesView searchExpensesView = new SearchExpensesView(this);
         stage.setScene(searchExpensesView.createSearchExpensesScene());
         stage.show();
     }
 
     public void showUserProfileView() {
+        System.out.println("แสดงหน้าจอโปรไฟล์ผู้ใช้"); // Debugging
         UserProfileView userProfileView = new UserProfileView(this);
-        stage.setScene(userProfileView.createUserProfileScene(currentUser));
+        stage.setScene(userProfileView.createUserProfileScene(currentUser)); // ส่ง currentUser ไปด้วย
         stage.show();
+    }
+
+    public void showBudgetView() {
+        Scene scene = budgetView.createBudgetScene(); // เรียก BudgetView เพื่อสร้าง Scene
+        stage.setScene(scene); // เปลี่ยน Scene บน Stage
+        stage.show(); // แสดง Stage
     }
 
     public void updateUserProfile(User user) {
@@ -75,8 +102,8 @@ public class Controller {
     }
 
     public void logout() {
-        currentUser = null;
-        showLoginView();
+        System.out.println("ออกจากระบบ"); // Debugging
+        showLoginView(); // กลับไปหน้าจอ Login
     }
 
     public void showLoginView() {
@@ -114,8 +141,25 @@ public class Controller {
         }
     }
 
-    private void showAlert(String title, String message) {
-        Alert alert = new Alert(Alert.AlertType.WARNING);
+    public void updateBudget(double newBudget) {
+        if (currentUser != null) {
+            currentUser.setMonthlyBudget(newBudget); // อัปเดตในหน่วยความจำ
+            DatabaseHelper.updateUserBudget(currentUser.getId(), newBudget); // อัปเดตในฐานข้อมูล
+
+            // ดึงยอดรวมรายจ่ายใหม่
+            double totalExpenses = DatabaseHelper.getTotalExpensesForCurrentMonth();
+
+            // อัปเดตข้อมูลใน MainView
+            mainView.updateSummary(totalExpenses, newBudget);
+
+            showAlert("สำเร็จ", "งบประมาณถูกอัปเดตเรียบร้อยแล้ว");
+        } else {
+            showAlert("ข้อผิดพลาด", "ไม่สามารถอัปเดตงบประมาณได้");
+        }
+    }
+
+    public void showAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(message);
@@ -125,5 +169,14 @@ public class Controller {
     public User getCurrentUser() {
         return currentUser;
     }
-}
+    
+    public void updateSummary(double totalExpenses, double monthlyBudget) {
+        double remainingBudget = monthlyBudget - totalExpenses;
+        System.out.println("ยอดรวมรายจ่าย: " + totalExpenses);
+        System.out.println("งบประมาณรายเดือน: " + monthlyBudget);
+        System.out.println("คงเหลือ: " + remainingBudget);
 
+        // เรียกใช้ updateSummary ใน MainView
+        mainView.updateSummary(totalExpenses, monthlyBudget);
+    }
+}

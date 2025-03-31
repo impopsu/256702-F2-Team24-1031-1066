@@ -3,6 +3,11 @@ package com.project;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
 
 public class DatabaseHelper {
 
@@ -10,8 +15,10 @@ public class DatabaseHelper {
     private static int nextId = 1;
     private static List<User> users = new ArrayList<>();
     private static List<ExpenseCategory> categories = new ArrayList<>();
+    private static final String DATABASE_URL = "jdbc:sqlite:mydatabase.db"; // เปลี่ยนชื่อไฟล์ฐานข้อมูลตามที่คุณต้องการ
 
     static {
+        users.add(new User("user", "password", "User", "Name", "user@example.com", "1234567890"));
         users.add(new User("user", "password", "User", "Name", "user@example.com", "1234567890"));
         categories.add(new ExpenseCategory("ค่าอาหาร"));
         categories.add(new ExpenseCategory("ค่าที่พัก"));
@@ -20,8 +27,19 @@ public class DatabaseHelper {
 
     // สร้างตารางฐานข้อมูลหากยังไม่มี
     public static void createTable() {
-        // ในตัวอย่างนี้ เราจะใช้ List แทนฐานข้อมูลจริง
-        // คุณสามารถเพิ่มโค้ดสำหรับการสร้างตารางในฐานข้อมูลจริงได้ที่นี่
+        String sql = "CREATE TABLE IF NOT EXISTS users (" +
+                     "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                     "username TEXT NOT NULL," +
+                     "password TEXT NOT NULL," +
+                     "monthly_budget REAL DEFAULT 0.0" +
+                     ");";
+
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     // ตรวจสอบการเข้าสู่ระบบ
@@ -147,15 +165,40 @@ public class DatabaseHelper {
     }
 
     public static double getTotalExpensesForCurrentMonth() {
-        LocalDate now = LocalDate.now();
-        double total = 0.0;
-
-        for (Expense expense : expenses) {
-            if (expense.getDate().getYear() == now.getYear() && expense.getDate().getMonth() == now.getMonth()) {
-                total += expense.getAmount();
+        String sql = "SELECT SUM(amount) FROM expenses WHERE strftime('%Y-%m', date) = strftime('%Y-%m', 'now')";
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
+            if (rs.next()) {
+                return rs.getDouble(1); // คืนค่าผลรวมของค่าใช้จ่าย
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
+        return 0.0; // คืนค่า 0.0 หากไม่มีข้อมูล
+    }
 
-        return total;
+    public static void updateUserBudget(int userId, double newBudget) {
+        String sql = "UPDATE users SET monthly_budget = ? WHERE id = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setDouble(1, newBudget);
+            pstmt.setInt(2, userId);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static Connection getConnection() throws SQLException {
+        return DriverManager.getConnection(DATABASE_URL);
+    }
+
+    public static void main(String[] args) {
+        try (Connection conn = DatabaseHelper.getConnection()) {
+            System.out.println("เชื่อมต่อฐานข้อมูลสำเร็จ!");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

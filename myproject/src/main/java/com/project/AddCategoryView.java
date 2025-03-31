@@ -7,6 +7,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 
 public class AddCategoryView {
 
@@ -17,8 +18,13 @@ public class AddCategoryView {
     }
 
     public Scene createAddCategoryScene() {
-        Label title = new Label("เพิ่มหมวดหมู่ใหม่");
-        title.setStyle("-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #333;");
+        VBox layout = new VBox(20);
+        layout.setAlignment(Pos.CENTER);
+        layout.setStyle("-fx-padding: 30px; -fx-background-color: #FAF3E0;");
+
+        Label headerLabel = new Label("เพิ่มหมวดหมู่ใหม่");
+        headerLabel.setFont(new Font("Arial", 24));
+        headerLabel.setStyle("-fx-text-fill: #333333;");
 
         TextField categoryField = new TextField();
         categoryField.setPromptText("ชื่อหมวดหมู่");
@@ -36,15 +42,12 @@ public class AddCategoryView {
             }
         });
 
-        Button backButton = new Button("ย้อนกลับ");
-        backButton.setStyle("-fx-font-size: 14px; -fx-background-color: #f44336; -fx-text-fill: white;");
-        backButton.setOnAction(e -> controller.showMainView());
+        Button backButton = new Button("⬅️ กลับ");
+        backButton.setOnAction(e -> controller.showMainView()); // กลับไปหน้าหลัก
 
-        VBox layout = new VBox(15, title, categoryField, addButton, backButton);
-        layout.setAlignment(Pos.CENTER);
-        layout.setStyle("-fx-padding: 30px; -fx-background-color: #f0f0f0;");
+        layout.getChildren().addAll(headerLabel, categoryField, addButton, backButton);
 
-        return new Scene(layout, 800, 600); // ปรับขนาดหน้าจอเป็น 800x600
+        return new Scene(layout, 800, 600);
     }
 
     private void showAlert(String title, String message) {

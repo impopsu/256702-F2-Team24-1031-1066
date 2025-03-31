@@ -6,7 +6,6 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
@@ -16,6 +15,7 @@ import java.util.List;
 public class MainView {
 
     private Controller controller;
+    private Label summaryLabel; // ย้าย summaryLabel มาเป็นตัวแปรระดับคลาส
 
     public MainView(Controller controller) {
         this.controller = controller;
@@ -23,23 +23,34 @@ public class MainView {
 
     public Scene createMainScene() {
         // Layout หลัก
-        VBox layout = new VBox(20); // ลดระยะห่างระหว่างองค์ประกอบ
+        VBox layout = new VBox(20);
         layout.setAlignment(Pos.CENTER);
-        layout.setStyle("-fx-padding: 20px; " +
-                "-fx-background-color: #F0F4F8;"); // พื้นหลังสีฟ้าอ่อน (สุภาพ)
+        layout.setStyle("-fx-padding: 30px; " +
+                "-fx-background-color: #FFE4E1;"); // พื้นหลังสีชมพูอ่อน (Mistly Rose)
+
+        // Header
+        Label headerLabel = new Label("@PersonalExpenseTracker");
+        headerLabel.setFont(new Font("Arial", 24));
+        headerLabel.setStyle("-fx-text-fill:rgb(24, 111, 62);"); // สีข้อความเป็นสีเขียวเข้ม (Sea Green)
 
         // แสดงยอดรวมรายรับ-รายจ่าย และคงเหลือ
-        Label summaryLabel = new Label();
-        summaryLabel.setFont(new Font("Arial", 18)); // ลดขนาดฟอนต์ให้เหมาะสม
-        summaryLabel.setStyle("-fx-text-fill: #333333;"); // สีข้อความเป็นสีเทาเข้ม
-        updateSummary(summaryLabel);
+        summaryLabel = new Label("ยอดรวมรายจ่าย: 0.00 บาท\nงบประมาณรายเดือน: 0.00 บาท\nคงเหลือ: 0.00 บาท");
+        summaryLabel.setFont(new Font("Arial", 18));
+        summaryLabel.setStyle("-fx-text-fill:rgb(37, 111, 69);"); // สีข้อความเป็นสีเขียวเข้ม (Sea Green)
+        summaryLabel.setAlignment(Pos.CENTER);
 
         // ปุ่มต่างๆ พร้อมอิโมติคอน
         Button addExpenseButton = createStyledButton("➕ เพิ่มค่าใช้จ่าย");
-        addExpenseButton.setOnAction(e -> controller.showAddExpenseView());
+        addExpenseButton.setOnAction(e -> {
+            System.out.println("กดปุ่มเพิ่มค่าใช้จ่าย"); // Debugging
+            controller.showAddExpenseView();
+        });
 
         Button viewExpensesButton = createStyledButton("📋 ดูรายการค่าใช้จ่าย");
-        viewExpensesButton.setOnAction(e -> controller.showViewExpensesView());
+        viewExpensesButton.setOnAction(e -> {
+            System.out.println("กดปุ่มดูรายการค่าใช้จ่าย"); // Debugging
+            controller.showViewExpensesView();
+        });
 
         Button addCategoryButton = createStyledButton("📂 เพิ่มหมวดหมู่ใหม่");
         addCategoryButton.setOnAction(e -> controller.showAddCategoryView());
@@ -53,40 +64,41 @@ public class MainView {
         Button profileButton = createStyledButton("👤 โปรไฟล์ผู้ใช้");
         profileButton.setOnAction(e -> controller.showUserProfileView());
 
-        Button logoutButton = createStyledButton("🚪 ออกจากระบบ");
+        Button budgetButton = createStyledButton("💰 งบประมาณ");
+        budgetButton.setOnAction(e -> controller.showBudgetView());
+
+        Button logoutButton = createStyledButton("➡️ ออกจากระบบ");
         logoutButton.setOnAction(e -> controller.logout());
 
         // จัดเรียงปุ่มใน GridPane
         GridPane buttonGrid = new GridPane();
-        buttonGrid.setHgap(15); // ลดระยะห่างแนวนอนระหว่างปุ่ม
-        buttonGrid.setVgap(15); // ลดระยะห่างแนวตั้งระหว่างปุ่ม
+        buttonGrid.setHgap(15); // ระยะห่างแนวนอนระหว่างปุ่ม
+        buttonGrid.setVgap(15); // ระยะห่างแนวตั้งระหว่างปุ่ม
         buttonGrid.setAlignment(Pos.CENTER);
 
         // เพิ่มปุ่มลงใน GridPane
         buttonGrid.add(addExpenseButton, 0, 0);
         buttonGrid.add(viewExpensesButton, 1, 0);
         buttonGrid.add(addCategoryButton, 0, 1);
-        buttonGrid.add(deleteCategoryButton, 1, 1);
+        buttonGrid.add(deleteCategoryButton, 1, 1); // ปุ่มลบหมวดหมู่
         buttonGrid.add(searchExpensesButton, 0, 2);
         buttonGrid.add(profileButton, 1, 2);
-        buttonGrid.add(logoutButton, 0, 3, 2, 1); // ปุ่ม Logout กินพื้นที่ 2 คอลัมน์
+        buttonGrid.add(budgetButton, 0, 3); // ปุ่มงบประมาณ
+        buttonGrid.add(logoutButton, 1, 3); // ปุ่ม Logout
 
-        // เพิ่ม Label และ GridPane ลงใน Layout หลัก
-        layout.getChildren().addAll(summaryLabel, buttonGrid);
+        // เพิ่ม Header, Summary และ GridPane ลงใน Layout หลัก
+        layout.getChildren().addAll(headerLabel, summaryLabel, buttonGrid);
 
         // สร้าง Scene และส่งกลับ (ขนาดหน้าจอ 800x600)
         return new Scene(layout, 800, 600);
     }
 
-    private void updateSummary(Label summaryLabel) {
-        List<Expense> expenses = DatabaseHelper.getAllExpenses();
-        double totalExpenses = expenses.stream().mapToDouble(Expense::getAmount).sum();
-        double monthlyBudget = controller.getCurrentUser().getMonthlyBudget();
+    // เมธอดสำหรับอัปเดตข้อความใน summaryLabel
+    public void updateSummary(double totalExpenses, double monthlyBudget) {
         double remainingBudget = monthlyBudget - totalExpenses;
-
         summaryLabel.setText(String.format(
-                "💰 ยอดรวมรายจ่าย: %.2f บาท\n📅 งบประมาณรายเดือน: %.2f บาท\n🟢 คงเหลือ: %.2f บาท",
-                totalExpenses, monthlyBudget, remainingBudget
+            "ยอดรวมรายจ่าย: %.2f บาท\nงบประมาณรายเดือน: %.2f บาท\nคงเหลือ: %.2f บาท",
+            totalExpenses, monthlyBudget, remainingBudget
         ));
     }
 
@@ -98,20 +110,12 @@ public class MainView {
         alert.showAndWait();
     }
 
-    private void showAlert(String title, String message) {
-        Alert alert = new Alert(AlertType.INFORMATION);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
-    }
-
     private Button createStyledButton(String text) {
         Button button = new Button(text);
-        button.setStyle("-fx-font-size: 14px; " + // ลดขนาดฟอนต์ให้เหมาะสม
-                "-fx-background-color: #E0E0E0; " + // สีเทาอ่อน
-                "-fx-text-fill: #333333; " + // ตัวอักษรสีเทาเข้ม
-                "-fx-padding: 8px 16px; " + // ลด Padding ให้เหมาะสม
+        button.setStyle("-fx-font-size: 16px; " +
+                "-fx-background-color: #98FB98; " + // สีเขียวอ่อน (Pale Green)
+                "-fx-text-fill: #FFFFFF; " + // ตัวอักษรสีขาว
+                "-fx-padding: 10px 20px; " +
                 "-fx-border-radius: 5px; " +
                 "-fx-background-radius: 5px;");
         return button;

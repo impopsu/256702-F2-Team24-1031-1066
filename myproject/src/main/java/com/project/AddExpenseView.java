@@ -2,11 +2,12 @@ package com.project;
 
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
-
+import javafx.scene.text.Font;
 import java.time.LocalDate;
-import java.util.List;
 
 public class AddExpenseView {
 
@@ -17,66 +18,38 @@ public class AddExpenseView {
     }
 
     public Scene createAddExpenseScene() {
-        Label titleLabel = new Label("เพิ่มรายการ");
-        titleLabel.setStyle("-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #333;");
+        VBox layout = new VBox(20);
+        layout.setAlignment(Pos.CENTER);
+        layout.setStyle("-fx-padding: 30px; -fx-background-color: #FAF3E0;");
 
-        Label descriptionLabel = new Label("คำอธิบาย:");
+        Label headerLabel = new Label("เพิ่มค่าใช้จ่าย");
+        headerLabel.setFont(new Font("Arial", 24));
+        headerLabel.setStyle("-fx-text-fill: #333333;");
+
         TextField descriptionField = new TextField();
         descriptionField.setPromptText("คำอธิบาย");
 
-        Label amountLabel = new Label("จำนวนเงิน:");
         TextField amountField = new TextField();
         amountField.setPromptText("จำนวนเงิน");
 
-        Label dateLabel = new Label("วันที่:");
-        DatePicker datePicker = new DatePicker(LocalDate.now());
-
-        Label categoryLabel = new Label("หมวดหมู่:");
-        ComboBox<String> categoryComboBox = new ComboBox<>();
-        List<ExpenseCategory> categories = DatabaseHelper.getAllCategories();
-        for (ExpenseCategory category : categories) {
-            categoryComboBox.getItems().add(category.getName());
-        }
-        categoryComboBox.setPromptText("เลือกหมวดหมู่");
-
-        Button saveButton = new Button("บันทึก");
-        saveButton.setStyle("-fx-font-size: 14px; -fx-background-color: #4CAF50; -fx-text-fill: white;");
+        Button saveButton = new Button("💾 บันทึก");
         saveButton.setOnAction(e -> {
             try {
                 String description = descriptionField.getText();
                 double amount = Double.parseDouble(amountField.getText());
-                LocalDate date = datePicker.getValue();
-                String category = categoryComboBox.getValue(); // ดึงค่าหมวดหมู่ที่เลือก
-
-                if (category == null || category.isEmpty()) {
-                    showAlert("ข้อผิดพลาด", "กรุณาเลือกหมวดหมู่");
-                    return;
-                }
-
-                DatabaseHelper.addExpense(description, amount, date, category); // เพิ่มหมวดหมู่
-                controller.checkBudget(); // ตรวจสอบงบประมาณหลังเพิ่มรายการ
-                controller.showMainView();
+                LocalDate date = LocalDate.now(); // ใช้วันที่ปัจจุบัน
+                controller.addExpense(description, amount, date);
+                controller.showMainView(); // กลับไปหน้าหลักหลังบันทึก
             } catch (NumberFormatException ex) {
-                showAlert("ข้อผิดพลาด", "กรุณากรอกจำนวนเงินเป็นตัวเลข");
+                controller.showAlert("ข้อผิดพลาด", "กรุณาใส่จำนวนเงินที่ถูกต้อง");
             }
         });
 
-        Button cancelButton = new Button("ยกเลิก");
-        cancelButton.setStyle("-fx-font-size: 14px; -fx-background-color: #f44336; -fx-text-fill: white;");
-        cancelButton.setOnAction(e -> controller.showMainView());
+        Button backButton = new Button("⬅️ กลับ");
+        backButton.setOnAction(e -> controller.showMainView()); // กลับไปหน้าหลัก
 
-        VBox layout = new VBox(15, titleLabel, descriptionLabel, descriptionField, amountLabel, amountField, dateLabel, datePicker, categoryLabel, categoryComboBox, saveButton, cancelButton);
-        layout.setAlignment(Pos.CENTER);
-        layout.setStyle("-fx-padding: 30px; -fx-background-color: #f0f0f0;");
+        layout.getChildren().addAll(headerLabel, descriptionField, amountField, saveButton, backButton);
 
-        return new Scene(layout, 1024, 768); // ปรับขนาดหน้าจอเป็น 1024x768
-    }
-
-    private void showAlert(String title, String message) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
+        return new Scene(layout, 800, 600);
     }
 }
