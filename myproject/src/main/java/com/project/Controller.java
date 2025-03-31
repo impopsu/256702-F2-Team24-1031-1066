@@ -50,17 +50,12 @@ public class Controller {
         stage.show();
     }
 
-    public void addExpense(String description, double amount, LocalDate date) {
-        // เพิ่มค่าใช้จ่ายลงในฐานข้อมูล
-        DatabaseHelper.addExpense(description, amount, date);
+    public void addExpense(String description, double amount, LocalDate date, String category) {
+        DatabaseHelper.addExpense(description, amount, date, category);
 
-        // ดึงยอดรวมรายจ่ายใหม่จากฐานข้อมูล
         double totalExpenses = DatabaseHelper.getTotalExpensesForCurrentMonth();
-
-        // ดึงงบประมาณรายเดือนของผู้ใช้ปัจจุบัน
         double monthlyBudget = currentUser.getMonthlyBudget();
 
-        // อัปเดตข้อมูลใน MainView
         mainView.updateSummary(totalExpenses, monthlyBudget);
     }
 

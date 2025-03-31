@@ -2,12 +2,12 @@ package com.project;
 
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
+
 import java.time.LocalDate;
+import java.util.List;
 
 public class AddExpenseView {
 
@@ -32,13 +32,32 @@ public class AddExpenseView {
         TextField amountField = new TextField();
         amountField.setPromptText("จำนวนเงิน");
 
+        // เพิ่ม ComboBox สำหรับเลือกหมวดหมู่
+        Label categoryLabel = new Label("หมวดหมู่:");
+        categoryLabel.setStyle("-fx-text-fill: #333333;");
+        ComboBox<String> categoryComboBox = new ComboBox<>();
+        categoryComboBox.setPromptText("เลือกหมวดหมู่");
+
+        // ดึงรายการหมวดหมู่จาก DatabaseHelper
+        List<ExpenseCategory> categories = DatabaseHelper.getAllCategories();
+        for (ExpenseCategory category : categories) {
+            categoryComboBox.getItems().add(category.getName());
+        }
+
         Button saveButton = new Button("💾 บันทึก");
         saveButton.setOnAction(e -> {
             try {
                 String description = descriptionField.getText();
                 double amount = Double.parseDouble(amountField.getText());
                 LocalDate date = LocalDate.now(); // ใช้วันที่ปัจจุบัน
-                controller.addExpense(description, amount, date);
+                String category = categoryComboBox.getValue(); // รับค่าหมวดหมู่ที่เลือก
+
+                if (category == null || category.isEmpty()) {
+                    controller.showAlert("ข้อผิดพลาด", "กรุณาเลือกหมวดหมู่");
+                    return;
+                }
+
+                controller.addExpense(description, amount, date, category);
                 controller.showMainView(); // กลับไปหน้าหลักหลังบันทึก
             } catch (NumberFormatException ex) {
                 controller.showAlert("ข้อผิดพลาด", "กรุณาใส่จำนวนเงินที่ถูกต้อง");
@@ -48,7 +67,7 @@ public class AddExpenseView {
         Button backButton = new Button("⬅️ กลับ");
         backButton.setOnAction(e -> controller.showMainView()); // กลับไปหน้าหลัก
 
-        layout.getChildren().addAll(headerLabel, descriptionField, amountField, saveButton, backButton);
+        layout.getChildren().addAll(headerLabel, descriptionField, amountField, categoryLabel, categoryComboBox, saveButton, backButton);
 
         return new Scene(layout, 800, 600);
     }

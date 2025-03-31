@@ -104,7 +104,7 @@ public class DatabaseHelper {
     }
 
     public static void addExpense(String description, double amount, LocalDate date, String category) {
-        expenses.add(new Expense(nextId++, description, amount, date, category)); // เพิ่มหมวดหมู่
+        expenses.add(new Expense(nextId++, description, amount, date, category));
     }
 
     // ดึงรายการค่าใช้จ่ายทั้งหมด
