@@ -26,17 +26,17 @@ public class MainView {
         VBox layout = new VBox(20);
         layout.setAlignment(Pos.CENTER);
         layout.setStyle("-fx-padding: 30px; " +
-                "-fx-background-color:rgb(188, 57, 118);"); // พื้นหลังสีชมพูอ่อน (Mistly Rose)
+                "-fx-background-color:rgb(21, 27, 87);"); // พื้นหลังสีชมพูอ่อน (Mistly Rose)
 
         // Header
         Label headerLabel = new Label("@PersonalExpenseTracker");
         headerLabel.setFont(new Font("Arial", 24));
-        headerLabel.setStyle("-fx-text-fill:rgb(16, 16, 16);"); // สีข้อความเป็นสีเขียวเข้ม (Sea Green)
+        headerLabel.setStyle("-fx-text-fill:rgb(248, 247, 247);"); // สีข้อความเป็นสีเขียวเข้ม (Sea Green)
 
         // แสดงยอดรวมรายรับ-รายจ่าย และคงเหลือ
-        summaryLabel = new Label("ยอดรวมรายจ่าย: 0.00 บาท\nงบประมาณรายเดือน: 0.00 บาท\nคงเหลือ: 0.00 บาท");
+        summaryLabel = new Label("ยอดรวมรายจ่าย: 0.00 บาท\nงบประมาณ: 0.00 บาท\nคงเหลือ: 0.00 บาท");
         summaryLabel.setFont(new Font("Arial", 18));
-        summaryLabel.setStyle("-fx-text-fill:rgb(17, 18, 18);"); // สีข้อความเป็นสีเขียวเข้ม (Sea Green)
+        summaryLabel.setStyle("-fx-text-fill:rgb(253, 254, 254);"); // สีข้อความเป็นสีเขียวเข้ม (Sea Green)
         summaryLabel.setAlignment(Pos.CENTER);
 
         // ปุ่มต่างๆ พร้อมอิโมติคอน
@@ -70,21 +70,33 @@ public class MainView {
         Button logoutButton = createStyledButton("➡️ ออกจากระบบ");
         logoutButton.setOnAction(e -> controller.logout());
 
+        // เพิ่มปุ่มสำหรับแสดงข้อความใน Alert Dialog
+        Button showSummaryButton = createStyledButton("📊 แสดงข้อมูลสรุป");
+        showSummaryButton.setOnAction(e -> {
+            // สร้าง Alert Dialog
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("ข้อมูลสรุป");
+            alert.setHeaderText("ข้อมูลยอดรวมรายจ่ายและงบประมาณ");
+            alert.setContentText(summaryLabel.getText()); // ใช้ข้อความจาก summaryLabel
+            alert.showAndWait();
+        });
+
         // จัดเรียงปุ่มใน GridPane
         GridPane buttonGrid = new GridPane();
-        buttonGrid.setHgap(15); // ระยะห่างแนวนอนระหว่างปุ่ม
-        buttonGrid.setVgap(15); // ระยะห่างแนวตั้งระหว่างปุ่ม
-        buttonGrid.setAlignment(Pos.CENTER);
+        buttonGrid.setHgap(15); // ระยะห่างแนวนอนระหว่างปุ่ม (ค่าเดิม)
+        buttonGrid.setVgap(15); // ระยะห่างแนวตั้งระหว่างปุ่ม (ค่าเดิม)
+        buttonGrid.setAlignment(Pos.CENTER); // จัดตำแหน่งให้อยู่ตรงกลาง
 
         // เพิ่มปุ่มลงใน GridPane
         buttonGrid.add(addExpenseButton, 0, 0);
         buttonGrid.add(viewExpensesButton, 1, 0);
         buttonGrid.add(addCategoryButton, 0, 1);
-        buttonGrid.add(deleteCategoryButton, 1, 1); // ปุ่มลบหมวดหมู่
+        buttonGrid.add(deleteCategoryButton, 1, 1);
         buttonGrid.add(searchExpensesButton, 0, 2);
         buttonGrid.add(profileButton, 1, 2);
-        buttonGrid.add(budgetButton, 0, 3); // ปุ่มงบประมาณ
-        buttonGrid.add(logoutButton, 1, 3); // ปุ่ม Logout
+        buttonGrid.add(budgetButton, 0, 3);
+        buttonGrid.add(logoutButton, 1, 3);
+        buttonGrid.add(showSummaryButton, 0, 4); // เพิ่มปุ่มในตำแหน่งใหม่ (แถวที่ 4 คอลัมน์ที่ 0)
 
         // เพิ่ม Header, Summary และ GridPane ลงใน Layout หลัก
         layout.getChildren().addAll(headerLabel, summaryLabel, buttonGrid);
@@ -97,7 +109,7 @@ public class MainView {
     public void updateSummary(double totalExpenses, double monthlyBudget) {
         double remainingBudget = monthlyBudget - totalExpenses;
         summaryLabel.setText(String.format(
-            "ยอดรวมรายจ่าย: %.2f บาท\nงบประมาณรายเดือน: %.2f บาท\nคงเหลือ: %.2f บาท",
+            "ยอดรวมรายจ่าย: %.2f บาท\nงบประมาณ: %.2f บาท\nคงเหลือ: %.2f บาท",
             totalExpenses, monthlyBudget, remainingBudget
         ));
     }
@@ -113,8 +125,8 @@ public class MainView {
     private Button createStyledButton(String text) {
         Button button = new Button(text);
         button.setStyle("-fx-font-size: 16px; " +
-                "-fx-background-color:rgb(113, 189, 113); " + // สีเขียวอ่อน (Pale Green)
-                "-fx-text-fill:rgb(22, 22, 22); " + // ตัวอักษรสีขาว
+                "-fx-background-color:rgb(235, 209, 11); " + // สีเขียวอ่อน (Pale Green)
+                "-fx-text-fill:rgb(3, 3, 3); " + // ตัวอักษรสีขาว
                 "-fx-padding: 10px 20px; " +
                 "-fx-border-radius: 5px; " +
                 "-fx-background-radius: 5px;");

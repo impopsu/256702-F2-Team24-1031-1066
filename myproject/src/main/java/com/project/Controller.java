@@ -173,7 +173,7 @@ public class Controller {
     public void updateSummary(double totalExpenses, double monthlyBudget) {
         double remainingBudget = monthlyBudget - totalExpenses;
         System.out.println("ยอดรวมรายจ่าย: " + totalExpenses);
-        System.out.println("งบประมาณรายเดือน: " + monthlyBudget);
+        System.out.println("งบประมาณ: " + monthlyBudget);
         System.out.println("คงเหลือ: " + remainingBudget);
 
         // เรียกใช้ updateSummary ใน MainView
