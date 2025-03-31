@@ -84,9 +84,10 @@ public class Controller {
     }
 
     public void showUserProfileView() {
-        System.out.println("แสดงหน้าจอโปรไฟล์ผู้ใช้"); // Debugging
         UserProfileView userProfileView = new UserProfileView(this);
-        stage.setScene(userProfileView.createUserProfileScene(currentUser)); // ส่ง currentUser ไปด้วย
+        stage.setScene(userProfileView.createUserProfileScene(currentUser));
+        stage.setWidth(800); // กำหนดความกว้างของหน้าต่าง
+        stage.setHeight(600); // กำหนดความสูงของหน้าต่าง
         stage.show();
     }
 

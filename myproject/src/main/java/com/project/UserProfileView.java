@@ -13,6 +13,8 @@ import javafx.scene.text.Font;
 public class UserProfileView {
 
     private Controller controller;
+    private static final int SCENE_WIDTH = 800;
+    private static final int SCENE_HEIGHT = 600;
 
     public UserProfileView(Controller controller) {
         this.controller = controller;
@@ -21,30 +23,35 @@ public class UserProfileView {
     public Scene createUserProfileScene(User user) {
         VBox layout = new VBox(20);
         layout.setAlignment(Pos.CENTER);
-        layout.setStyle("-fx-padding: 30px; -fx-background-color: #FAF3E0;");
+        layout.setStyle("-fx-padding: 30px; -fx-background-color: #001F54;"); // พื้นหลังสีน้ำเงินเข้ม (กรมท่า)
 
         Label headerLabel = new Label("โปรไฟล์ผู้ใช้");
         headerLabel.setFont(new Font("Arial", 24));
-        headerLabel.setStyle("-fx-text-fill: #333333;");
+        headerLabel.setStyle("-fx-text-fill: #FFD700;"); // สีข้อความเป็นสีเหลืองเข้ม (Golden Yellow)
 
         Label usernameLabel = new Label("ชื่อผู้ใช้:");
+        usernameLabel.setStyle("-fx-text-fill: #FFD700;"); // สีข้อความเป็นสีเหลืองเข้ม
         TextField usernameField = new TextField(user.getUsername());
         usernameField.setPromptText("ชื่อผู้ใช้");
         usernameField.setDisable(true);
 
         Label firstNameLabel = new Label("ชื่อจริง:");
+        firstNameLabel.setStyle("-fx-text-fill: #FFD700;"); // สีข้อความเป็นสีเหลืองเข้ม
         TextField firstNameField = new TextField(user.getFirstName());
         firstNameField.setPromptText("ชื่อจริง");
 
         Label lastNameLabel = new Label("นามสกุล:");
+        lastNameLabel.setStyle("-fx-text-fill: #FFD700;"); // สีข้อความเป็นสีเหลืองเข้ม
         TextField lastNameField = new TextField(user.getLastName());
         lastNameField.setPromptText("นามสกุล");
 
         Label emailLabel = new Label("อีเมล:");
+        emailLabel.setStyle("-fx-text-fill: #FFD700;"); // สีข้อความเป็นสีเหลืองเข้ม
         TextField emailField = new TextField(user.getEmail());
         emailField.setPromptText("อีเมล");
 
         Label phoneLabel = new Label("เบอร์โทรศัพท์:");
+        phoneLabel.setStyle("-fx-text-fill: #FFD700;"); // สีข้อความเป็นสีเหลืองเข้ม
         TextField phoneField = new TextField(user.getPhoneNumber());
         phoneField.setPromptText("เบอร์โทรศัพท์");
         phoneField.addEventFilter(KeyEvent.KEY_TYPED, event -> {
@@ -54,11 +61,12 @@ public class UserProfileView {
         });
 
         Label budgetLabel = new Label("งบประมาณรายเดือน:");
+        budgetLabel.setStyle("-fx-text-fill: #FFD700;"); // สีข้อความเป็นสีเหลืองเข้ม
         TextField budgetField = new TextField(String.valueOf(user.getMonthlyBudget()));
         budgetField.setPromptText("งบประมาณรายเดือน");
 
         Button saveButton = new Button("บันทึก");
-        saveButton.setStyle("-fx-font-size: 14px; -fx-background-color: #4CAF50; -fx-text-fill: white;");
+        saveButton.setStyle("-fx-font-size: 14px; -fx-background-color: #FFD700; -fx-text-fill: #001F54;"); // ปุ่มสีเหลืองเข้ม
         saveButton.setOnAction(e -> {
             try {
                 double budget = Double.parseDouble(budgetField.getText());
@@ -75,11 +83,20 @@ public class UserProfileView {
         });
 
         Button backButton = new Button("⬅️ กลับ");
+        backButton.setStyle("-fx-font-size: 14px; -fx-background-color: #FFD700; -fx-text-fill: #001F54;"); // ปุ่มสีเหลืองเข้ม
         backButton.setOnAction(e -> controller.showMainView()); // กลับไปหน้าหลัก
 
-        layout.getChildren().addAll(headerLabel, usernameLabel, usernameField, firstNameLabel, firstNameField, lastNameLabel, lastNameField, emailLabel, emailField, phoneLabel, phoneField, budgetLabel, budgetField, saveButton, backButton);
+        layout.getChildren().addAll(
+            headerLabel, usernameLabel, usernameField,
+            firstNameLabel, firstNameField,
+            lastNameLabel, lastNameField,
+            emailLabel, emailField,
+            phoneLabel, phoneField,
+            budgetLabel, budgetField,
+            saveButton, backButton
+        );
 
-        return new Scene(layout, 800, 600);
+        return new Scene(layout, SCENE_WIDTH, SCENE_HEIGHT);
     }
 
     private void showAlert(String title, String message) {
