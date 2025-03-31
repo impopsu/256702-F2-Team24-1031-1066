@@ -1,4 +1,4 @@
-package com.project;
+  package com.project;
 
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -60,25 +60,18 @@ public class UserProfileView {
             }
         });
 
-        Label budgetLabel = new Label("งบประมาณรายเดือน:");
-        budgetLabel.setStyle("-fx-text-fill: #FFD700;"); // สีข้อความเป็นสีเหลืองเข้ม
-        TextField budgetField = new TextField(String.valueOf(user.getMonthlyBudget()));
-        budgetField.setPromptText("งบประมาณรายเดือน");
-
         Button saveButton = new Button("บันทึก");
         saveButton.setStyle("-fx-font-size: 14px; -fx-background-color: #FFD700; -fx-text-fill: #001F54;"); // ปุ่มสีเหลืองเข้ม
         saveButton.setOnAction(e -> {
             try {
-                double budget = Double.parseDouble(budgetField.getText());
-                user.setMonthlyBudget(budget);
                 user.setFirstName(firstNameField.getText());
                 user.setLastName(lastNameField.getText());
                 user.setEmail(emailField.getText());
                 user.setPhoneNumber(phoneField.getText());
                 controller.updateUserProfile(user);
-                showAlert("สำเร็จ", "บันทึกงบประมาณเรียบร้อยแล้ว");
+                showAlert("สำเร็จ", "บันทึกข้อมูลเรียบร้อยแล้ว");
             } catch (NumberFormatException ex) {
-                showAlert("ข้อผิดพลาด", "กรุณากรอกงบประมาณเป็นตัวเลข");
+                showAlert("ข้อผิดพลาด", "กรุณากรอกข้อมูลให้ถูกต้อง");
             }
         });
 
@@ -92,7 +85,6 @@ public class UserProfileView {
             lastNameLabel, lastNameField,
             emailLabel, emailField,
             phoneLabel, phoneField,
-            budgetLabel, budgetField,
             saveButton, backButton
         );
 
