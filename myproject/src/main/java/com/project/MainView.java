@@ -61,6 +61,9 @@ public class MainView {
         Button logoutButton = createStyledButton("➡️ ออกจากระบบ");
         logoutButton.setOnAction(e -> controller.logout());
 
+        Button summaryButton = createStyledButton("📊 สรุปข้อมูลการใช้จ่าย");
+        summaryButton.setOnAction(e -> controller.showSummaryView());
+
         // จัดเรียงปุ่มใน GridPane
         GridPane buttonGrid = new GridPane();
         buttonGrid.setHgap(15); // ระยะห่างแนวนอนระหว่างปุ่ม (ค่าเดิม)
@@ -76,6 +79,7 @@ public class MainView {
         buttonGrid.add(profileButton, 1, 2);
         buttonGrid.add(budgetButton, 0, 3);
         buttonGrid.add(logoutButton, 1, 3);
+        buttonGrid.add(summaryButton, 0, 4); // เพิ่มปุ่มในตำแหน่งใหม่
 
         // เพิ่ม Header และ GridPane ลงใน Layout หลัก
         layout.getChildren().addAll(headerLabel, buttonGrid);

@@ -165,4 +165,10 @@ public class Controller {
         System.out.println("คงเหลือ: " + remainingBudget);
 
     }
+
+    public void showSummaryView() {
+        SummaryView summaryView = new SummaryView(this);
+        stage.setScene(summaryView.createSummaryScene());
+        stage.show();
+    }
 }
