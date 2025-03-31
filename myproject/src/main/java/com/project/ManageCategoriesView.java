@@ -8,8 +8,6 @@ import javafx.scene.layout.VBox;
 import java.util.List;
 import java.util.Optional;
 
-import com.project.DatabaseHelper;
-
 public class ManageCategoriesView {
 
     private Controller controller;

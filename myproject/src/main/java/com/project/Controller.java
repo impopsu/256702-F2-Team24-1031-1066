@@ -3,7 +3,6 @@ package com.project;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 
 import java.time.LocalDate;
 
@@ -44,19 +43,15 @@ public class Controller {
         stage.show();
     }
 
-    public void showEditExpenseView(int expenseId, String currentDescription, double currentAmount, LocalDate currentDate) {
-        EditExpenseView editExpenseView = new EditExpenseView(this);
-        stage.setScene(editExpenseView.createEditExpenseScene(expenseId, currentDescription, currentAmount, currentDate));
-        stage.show();
+
+    public void showEditExpenseView(Expense expense) {
+        EditExpenseView editExpenseView = new EditExpenseView(this, expense);
+        stage.setScene(editExpenseView.createEditExpenseScene());
     }
 
     public void addExpense(String description, double amount, LocalDate date, String category) {
         DatabaseHelper.addExpense(description, amount, date, category);
-
-        double totalExpenses = DatabaseHelper.getTotalExpensesForCurrentMonth();
-        double monthlyBudget = currentUser.getMonthlyBudget();
-
-        mainView.updateSummary(totalExpenses, monthlyBudget);
+        showViewExpensesView(); // แสดงหน้าดูรายการหลังจากเพิ่มข้อมูล
     }
 
     public void editExpense(int expenseId, String newDescription, double newAmount, LocalDate newDate) {

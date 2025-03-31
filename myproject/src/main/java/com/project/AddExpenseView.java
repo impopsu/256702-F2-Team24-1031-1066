@@ -32,6 +32,12 @@ public class AddExpenseView {
         TextField amountField = new TextField();
         amountField.setPromptText("จำนวนเงิน");
 
+        // เพิ่ม DatePicker สำหรับเลือกวันที่
+        Label dateLabel = new Label("วันที่:");
+        dateLabel.setStyle("-fx-text-fill: #333333;");
+        DatePicker datePicker = new DatePicker();
+        datePicker.setValue(LocalDate.now()); // ตั้งค่าเริ่มต้นเป็นวันที่ปัจจุบัน
+
         // เพิ่ม ComboBox สำหรับเลือกหมวดหมู่
         Label categoryLabel = new Label("หมวดหมู่:");
         categoryLabel.setStyle("-fx-text-fill: #333333;");
@@ -49,8 +55,13 @@ public class AddExpenseView {
             try {
                 String description = descriptionField.getText();
                 double amount = Double.parseDouble(amountField.getText());
-                LocalDate date = LocalDate.now(); // ใช้วันที่ปัจจุบัน
+                LocalDate date = datePicker.getValue(); // รับค่าวันที่ที่เลือก
                 String category = categoryComboBox.getValue(); // รับค่าหมวดหมู่ที่เลือก
+
+                if (date == null) {
+                    controller.showAlert("ข้อผิดพลาด", "กรุณาเลือกวันที่");
+                    return;
+                }
 
                 if (category == null || category.isEmpty()) {
                     controller.showAlert("ข้อผิดพลาด", "กรุณาเลือกหมวดหมู่");
@@ -67,7 +78,7 @@ public class AddExpenseView {
         Button backButton = new Button("⬅️ กลับ");
         backButton.setOnAction(e -> controller.showMainView()); // กลับไปหน้าหลัก
 
-        layout.getChildren().addAll(headerLabel, descriptionField, amountField, categoryLabel, categoryComboBox, saveButton, backButton);
+        layout.getChildren().addAll(headerLabel, descriptionField, amountField, dateLabel, datePicker, categoryLabel, categoryComboBox, saveButton, backButton);
 
         return new Scene(layout, 800, 600);
     }

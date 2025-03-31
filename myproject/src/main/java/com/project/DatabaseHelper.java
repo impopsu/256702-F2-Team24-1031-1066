@@ -8,6 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.sql.Statement;
 
 public class DatabaseHelper {
 
@@ -37,6 +38,37 @@ public class DatabaseHelper {
         try (Connection conn = getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void createExpensesTable() {
+        String sql = "CREATE TABLE IF NOT EXISTS expenses (" +
+                     "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                     "description TEXT NOT NULL, " +
+                     "amount REAL NOT NULL, " +
+                     "date TEXT NOT NULL, " +
+                     "category TEXT NOT NULL" +
+                     ");";
+
+        try (Connection conn = getConnection();
+             Statement stmt = conn.createStatement()) {
+            stmt.execute(sql);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void createCategoriesTable() {
+        String sql = "CREATE TABLE IF NOT EXISTS categories (" +
+                     "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                     "name TEXT NOT NULL UNIQUE" +
+                     ");";
+
+        try (Connection conn = getConnection();
+             Statement stmt = conn.createStatement()) {
+            stmt.execute(sql);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -75,7 +107,15 @@ public class DatabaseHelper {
 
     // เพิ่มหมวดหมู่ค่าใช้จ่ายใหม่
     public static void addCategory(String name) {
-        categories.add(new ExpenseCategory(name));
+        String sql = "INSERT INTO categories(name) VALUES(?)";
+
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, name);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     // ลบหมวดหมู่ค่าใช้จ่าย
@@ -95,36 +135,72 @@ public class DatabaseHelper {
 
     // ดึงหมวดหมู่ค่าใช้จ่ายทั้งหมด
     public static List<ExpenseCategory> getAllCategories() {
-        return new ArrayList<>(categories);
-    }
+        List<ExpenseCategory> categories = new ArrayList<>();
+        String sql = "SELECT name FROM categories";
 
-    // เพิ่มรายการค่าใช้จ่ายใหม่
-    public static void addExpense(String description, double amount, LocalDate date) {
-        expenses.add(new Expense(nextId++, description, amount, date));
+        try (Connection conn = getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            while (rs.next()) {
+                categories.add(new ExpenseCategory(rs.getString("name")));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return categories;
     }
 
     public static void addExpense(String description, double amount, LocalDate date, String category) {
-        expenses.add(new Expense(nextId++, description, amount, date, category));
+        String sql = "INSERT INTO expenses(description, amount, date, category) VALUES(?, ?, ?, ?)";
+
+        try (Connection conn = getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) { // เปลี่ยน connect() เป็น getConnection()
+            pstmt.setString(1, description);
+            pstmt.setDouble(2, amount);
+            pstmt.setString(3, date.toString());
+            pstmt.setString(4, category);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     // ดึงรายการค่าใช้จ่ายทั้งหมด
     public static List<Expense> getAllExpenses() {
         List<Expense> expensesList = new ArrayList<>();
-        for (Expense expense : expenses) {
-            expensesList.add(new Expense(
-                expense.getId(),
-                expense.getDescription(),
-                expense.getAmount(),
-                expense.getDate(),
-                expense.getCategory() // เพิ่มหมวดหมู่
-            ));
+        String sql = "SELECT id, description, amount, date, category FROM expenses";
+
+        try (Connection conn = getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            while (rs.next()) {
+                expensesList.add(new Expense(
+                    rs.getInt("id"),
+                    rs.getString("description"),
+                    rs.getDouble("amount"),
+                    LocalDate.parse(rs.getString("date")),
+                    rs.getString("category")
+                ));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
+
         return expensesList;
     }
 
     // ลบรายการค่าใช้จ่ายตาม ID
     public static boolean deleteExpense(int id) {
-        return expenses.removeIf(expense -> expense.getId() == id);
+        String sql = "DELETE FROM expenses WHERE id = ?";
+
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, id);
+            return pstmt.executeUpdate() > 0; // คืนค่า true หากลบสำเร็จ
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     // แก้ไขรายการค่าใช้จ่ายตาม ID
@@ -138,6 +214,23 @@ public class DatabaseHelper {
             }
         }
         return false;
+    }
+
+    public static boolean updateExpense(Expense expense) {
+        String sql = "UPDATE expenses SET description = ?, amount = ?, date = ?, category = ? WHERE id = ?";
+
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, expense.getDescription());
+            pstmt.setDouble(2, expense.getAmount());
+            pstmt.setString(3, expense.getDate().toString());
+            pstmt.setString(4, expense.getCategory());
+            pstmt.setInt(5, expense.getId());
+            return pstmt.executeUpdate() > 0; // คืนค่า true หากอัปเดตสำเร็จ
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     // ดึงรายการค่าใช้จ่ายทั้งหมดในรูปแบบ String
@@ -192,6 +285,22 @@ public class DatabaseHelper {
 
     public static Connection getConnection() throws SQLException {
         return DriverManager.getConnection(DATABASE_URL);
+    }
+
+    public static void addDefaultCategories() {
+        String[] defaultCategories = {"ค่าอาหาร", "ค่าที่พัก", "ค่าเดินทาง", "ค่าใช้จ่ายอื่นๆ"};
+
+        for (String category : defaultCategories) {
+            String sql = "INSERT OR IGNORE INTO categories(name) VALUES(?)";
+
+            try (Connection conn = getConnection();
+                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                pstmt.setString(1, category);
+                pstmt.executeUpdate();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public static void main(String[] args) {
