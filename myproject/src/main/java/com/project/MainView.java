@@ -83,6 +83,20 @@ public class MainView {
         Button summaryButton = createStyledButton("📊 สรุปข้อมูลการใช้จ่าย");
         summaryButton.setOnAction(e -> controller.showSummaryView());
 
+        // เพิ่มปุ่มรีเซ็ตข้อมูล
+        Button resetButton = createStyledButton("🔄 รีเซ็ตข้อมูล");
+        resetButton.setOnAction(e -> {
+            DatabaseHelper.clearAllExpenses(); // ลบข้อมูลค่าใช้จ่ายทั้งหมด
+            controller.getCurrentUser().setMonthlyBudget(0); // รีเซ็ตงบประมาณเป็น 0
+
+            // อัปเดต UI
+            totalExpenseLabel.setText("ยอดรวมค่าใช้จ่าย: 0.00 บาท");
+            budgetLabel.setText("งบประมาณ: 0.00 บาท");
+            balanceLabel.setText("ยอดคงเหลือ: 0.00 บาท");
+
+            System.out.println("ข้อมูลถูกรีเซ็ตแล้ว");
+        });
+
         // จัดเรียงปุ่มใน GridPane
         GridPane buttonGrid = new GridPane();
         buttonGrid.setHgap(15); // ระยะห่างแนวนอนระหว่างปุ่ม (ค่าเดิม)
@@ -99,6 +113,7 @@ public class MainView {
         buttonGrid.add(budgetButton, 0, 3);
         buttonGrid.add(summaryButton, 1, 3);
         buttonGrid.add(logoutButton, 0, 4);
+        buttonGrid.add(resetButton, 1, 4);
 
         // เพิ่ม Header, ข้อมูลยอดรวม และ GridPane ลงใน Layout หลัก
         layout.getChildren().addAll(headerLabel, totalExpenseLabel, budgetLabel, balanceLabel, buttonGrid);

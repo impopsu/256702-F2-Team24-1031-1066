@@ -1,4 +1,3 @@
-
 package com.project;
 
 import java.time.LocalDate;
@@ -301,6 +300,16 @@ public class DatabaseHelper {
             } catch (SQLException e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    public static void clearAllExpenses() {
+        // ตัวอย่างโค้ดสำหรับลบข้อมูลในฐานข้อมูล
+        try (Connection conn = getConnection();
+             Statement stmt = conn.createStatement()) {
+            stmt.executeUpdate("DELETE FROM expenses"); // ลบข้อมูลทั้งหมดในตาราง expenses
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
