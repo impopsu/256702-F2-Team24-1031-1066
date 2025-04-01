@@ -21,70 +21,45 @@ public class ManageCategoriesView {
         title.setStyle("-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #333;");
 
         ListView<String> categoryListView = new ListView<>();
+        categoryListView.setStyle("-fx-font-size: 14px; -fx-padding: 10px;");
+
+        // ดึงหมวดหมู่จากฐานข้อมูลและเพิ่มลงใน ListView
         List<ExpenseCategory> categories = DatabaseHelper.getAllCategories();
+        System.out.println("หมวดหมู่ที่ดึงมา: " + categories); // Debugging
         for (ExpenseCategory category : categories) {
             categoryListView.getItems().add(category.getName());
         }
-        categoryListView.setStyle("-fx-font-size: 14px; -fx-padding: 10px;");
 
         // ปุ่มลบหมวดหมู่
         Button deleteButton = new Button("ลบหมวดหมู่ที่เลือก");
-        deleteButton.setStyle("-fx-font-size: 14px; -fx-background-color: #f44336; -fx-text-fill: white;");
         deleteButton.setOnAction(e -> {
             String selectedCategory = categoryListView.getSelectionModel().getSelectedItem();
-            if (selectedCategory != null) {
-                // แสดงการยืนยันก่อนลบ
-                Alert confirmationAlert = new Alert(Alert.AlertType.CONFIRMATION);
-                confirmationAlert.setTitle("ยืนยันการลบ");
-                confirmationAlert.setHeaderText(null);
-                confirmationAlert.setContentText("คุณต้องการลบหมวดหมู่ \"" + selectedCategory + "\" ใช่หรือไม่?");
-                
-                Optional<ButtonType> result = confirmationAlert.showAndWait();
-                if (result.isPresent() && result.get() == ButtonType.OK) {
-                    // ลบหมวดหมู่จากฐานข้อมูล
-                    DatabaseHelper.deleteCategory(selectedCategory);
-
-                    // อัปเดต ListView
-                    categoryListView.getItems().remove(selectedCategory);
-
-                    // แสดงข้อความแจ้งเตือน
-                    showAlert("สำเร็จ", "หมวดหมู่ \"" + selectedCategory + "\" ถูกลบเรียบร้อยแล้ว");
-                }
-            } else {
-                // แสดงข้อความแจ้งเตือนหากไม่มีการเลือกหมวดหมู่
+            if (selectedCategory == null) {
                 showAlert("ข้อผิดพลาด", "กรุณาเลือกหมวดหมู่ที่ต้องการลบ");
+                return;
             }
-        });
 
-        // ปุ่มแก้ไขหมวดหมู่
-        Button editButton = new Button("แก้ไขหมวดหมู่");
-        editButton.setStyle("-fx-font-size: 14px; -fx-background-color: #2196F3; -fx-text-fill: white;");
-        editButton.setOnAction(e -> {
-            String selectedCategory = categoryListView.getSelectionModel().getSelectedItem();
-            if (selectedCategory != null) {
-                TextInputDialog dialog = new TextInputDialog(selectedCategory);
-                dialog.setTitle("แก้ไขหมวดหมู่");
-                dialog.setHeaderText("กรุณากรอกชื่อหมวดหมู่ใหม่");
-                Optional<String> newCategoryName = dialog.showAndWait();
-                if (newCategoryName.isPresent()) {
-                    DatabaseHelper.editCategory(selectedCategory, newCategoryName.get());
-                    categoryListView.getItems().set(categoryListView.getSelectionModel().getSelectedIndex(), newCategoryName.get());
-                    showAlert("สำเร็จ", "แก้ไขหมวดหมู่เรียบร้อย!");
+            Alert confirmationAlert = new Alert(Alert.AlertType.CONFIRMATION);
+            confirmationAlert.setTitle("ยืนยันการลบ");
+            confirmationAlert.setHeaderText("คุณต้องการลบหมวดหมู่ \"" + selectedCategory + "\" ใช่หรือไม่?");
+            Optional<ButtonType> result = confirmationAlert.showAndWait();
+
+            if (result.isPresent() && result.get() == ButtonType.OK) {
+                boolean success = DatabaseHelper.deleteCategory(selectedCategory);
+                if (success) {
+                    showAlert("สำเร็จ", "ลบหมวดหมู่ \"" + selectedCategory + "\" สำเร็จแล้ว");
+                    categoryListView.getItems().remove(selectedCategory);
+                } else {
+                    showAlert("ข้อผิดพลาด", "ไม่สามารถลบหมวดหมู่ \"" + selectedCategory + "\" ได้");
                 }
-            } else {
-                showAlert("ผิดพลาด", "กรุณาเลือกหมวดหมู่ที่ต้องการแก้ไข");
             }
         });
 
-        Button backButton = new Button("ย้อนกลับ");
-        backButton.setStyle("-fx-font-size: 14px; -fx-background-color: #4CAF50; -fx-text-fill: white;");
-        backButton.setOnAction(e -> controller.showMainView());
-
-        VBox layout = new VBox(15, title, categoryListView, deleteButton, editButton, backButton);
+        VBox layout = new VBox(20, title, categoryListView, deleteButton);
         layout.setAlignment(Pos.CENTER);
-        layout.setStyle("-fx-padding: 30px; -fx-background-color: #f0f0f0;");
+        layout.setStyle("-fx-padding: 30px; -fx-background-color: #FAF3E0;");
 
-        return new Scene(layout, 800, 600); // ปรับขนาดหน้าจอเป็น 800x600
+        return new Scene(layout, 800, 600);
     }
 
     private void showAlert(String title, String message) {

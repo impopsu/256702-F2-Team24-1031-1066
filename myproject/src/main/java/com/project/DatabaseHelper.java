@@ -13,10 +13,11 @@ import java.sql.Statement;
 public class DatabaseHelper {
 
     private static List<Expense> expenses = new ArrayList<>();
-    private static int nextId = 1;
     private static List<User> users = new ArrayList<>();
     private static List<ExpenseCategory> categories = new ArrayList<>();
     private static final String DATABASE_URL = "jdbc:sqlite:mydatabase.db"; // เปลี่ยนชื่อไฟล์ฐานข้อมูลตามที่คุณต้องการ
+    @SuppressWarnings("unused")
+    private static int nextId;
 
     static {
         users.add(new User("user", "password", "User", "Name", "user@example.com", "1234567890"));
@@ -147,7 +148,6 @@ public class DatabaseHelper {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
         return categories;
     }
 
@@ -301,17 +301,8 @@ public class DatabaseHelper {
 
     public static void addDefaultCategories() {
         String[] defaultCategories = {"ค่าอาหาร", "ค่าที่พัก", "ค่าเดินทาง", "ค่าใช้จ่ายอื่นๆ"};
-
         for (String category : defaultCategories) {
-            String sql = "INSERT OR IGNORE INTO categories(name) VALUES(?)";
-
-            try (Connection conn = getConnection();
-                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                pstmt.setString(1, category);
-                pstmt.executeUpdate();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            addCategory(category);
         }
     }
 
@@ -322,6 +313,20 @@ public class DatabaseHelper {
             stmt.executeUpdate("DELETE FROM expenses"); // ลบข้อมูลทั้งหมดในตาราง expenses
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+    }
+
+    public static boolean deleteCategory(String categoryName) {
+        String sql = "DELETE FROM categories WHERE name = ?";
+
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, categoryName);
+            int affectedRows = pstmt.executeUpdate();
+            return affectedRows > 0; // คืนค่า true ถ้าลบสำเร็จ
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
         }
     }
 

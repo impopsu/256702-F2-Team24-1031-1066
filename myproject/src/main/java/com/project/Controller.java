@@ -18,6 +18,7 @@ public class Controller {
         this.stage = stage;
         this.mainView = new MainView(this);
         this.budgetView = new BudgetView(this);
+        stage.setResizable(false); // ป้องกันการปรับขนาดหน้าต่าง
     }
 
     public void start() {
@@ -28,6 +29,7 @@ public class Controller {
         Scene scene = mainView.createMainScene();
         stage.setScene(scene);
         stage.show();
+        stage.getScene().getRoot().requestFocus(); // รีเซ็ต Focus
     }
 
     public void showAddExpenseView() {
@@ -76,9 +78,8 @@ public class Controller {
 
     public void showUserProfileView() {
         UserProfileView userProfileView = new UserProfileView(this);
-        stage.setScene(userProfileView.createUserProfileScene(currentUser));
-        stage.setWidth(800); // กำหนดความกว้างของหน้าต่าง
-        stage.setHeight(600); // กำหนดความสูงของหน้าต่าง
+        Scene scene = userProfileView.createUserProfileScene(currentUser);
+        stage.setScene(scene);
         stage.show();
     }
 

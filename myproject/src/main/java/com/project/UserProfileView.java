@@ -1,4 +1,4 @@
-  package com.project;
+package com.project;
 
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -24,6 +24,7 @@ public class UserProfileView {
         VBox layout = new VBox(20);
         layout.setAlignment(Pos.CENTER);
         layout.setStyle("-fx-padding: 30px; -fx-background-color: #001F54;"); // พื้นหลังสีน้ำเงินเข้ม (กรมท่า)
+        layout.setPrefSize(800, 600); // กำหนดขนาดคงที่
 
         Label headerLabel = new Label("โปรไฟล์ผู้ใช้");
         headerLabel.setFont(new Font("Arial", 24));
