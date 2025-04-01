@@ -50,7 +50,7 @@ public class ManageCategoriesView {
                     showAlert("สำเร็จ", "ลบหมวดหมู่ \"" + selectedCategory + "\" สำเร็จแล้ว");
                     categoryListView.getItems().remove(selectedCategory);
                 } else {
-                    showAlert("ข้อผิดพลาด", "ไม่สามารถลบหมวดหมู่ \"" + selectedCategory + "\" ได้");
+                    showAlert("ข้อผิดพลาด", "ไม่สามารถลบหมวดหมู่ \"" + selectedCategory + "\" ได้ เนื่องจากมีการใช้งานอยู่");
                 }
             }
         });

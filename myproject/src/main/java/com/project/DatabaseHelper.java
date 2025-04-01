@@ -119,11 +119,6 @@ public class DatabaseHelper {
         }
     }
 
-    // ลบหมวดหมู่ค่าใช้จ่าย
-    public static void deleteCategory(String name) {
-        categories.removeIf(category -> category.getName().equals(name));
-    }
-
     // แก้ไขหมวดหมู่ค่าใช้จ่าย
     public static void editCategory(String oldName, String newName) {
         for (ExpenseCategory category : categories) {
@@ -317,13 +312,26 @@ public class DatabaseHelper {
     }
 
     public static boolean deleteCategory(String categoryName) {
-        String sql = "DELETE FROM categories WHERE name = ?";
+        // ตรวจสอบว่าหมวดหมู่ถูกใช้งานในตาราง expenses หรือไม่
+        String checkSql = "SELECT COUNT(*) FROM expenses WHERE category = ?";
+        String deleteSql = "DELETE FROM categories WHERE name = ?";
 
         try (Connection conn = getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, categoryName);
-            int affectedRows = pstmt.executeUpdate();
-            return affectedRows > 0; // คืนค่า true ถ้าลบสำเร็จ
+             PreparedStatement checkStmt = conn.prepareStatement(checkSql);
+             PreparedStatement deleteStmt = conn.prepareStatement(deleteSql)) {
+
+            // ตรวจสอบการใช้งานหมวดหมู่
+            checkStmt.setString(1, categoryName);
+            ResultSet rs = checkStmt.executeQuery();
+            if (rs.next() && rs.getInt(1) > 0) {
+                // หมวดหมู่ถูกใช้งานในตาราง expenses
+                return false;
+            }
+
+            // ลบหมวดหมู่
+            deleteStmt.setString(1, categoryName);
+            int affectedRows = deleteStmt.executeUpdate();
+            return affectedRows > 0; // คืนค่า true หากลบสำเร็จ
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
