@@ -236,8 +236,20 @@ public class DatabaseHelper {
     // ดึงรายการค่าใช้จ่ายทั้งหมดในรูปแบบ String
     public static List<String> getAllExpensesList() {
         List<String> expenseStrings = new ArrayList<>();
-        for (Expense expense : expenses) {
-            expenseStrings.add(expense.getId() + " - " + expense.getDescription() + " - " + expense.getAmount() + " - " + expense.getDate());
+        String sql = "SELECT description, amount, date, category FROM expenses";
+
+        try (Connection conn = getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            while (rs.next()) {
+                String description = rs.getString("description");
+                double amount = rs.getDouble("amount");
+                String date = rs.getString("date");
+                String category = rs.getString("category");
+                expenseStrings.add(description + " - " + amount + " บาท - " + date + " - " + category);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         return expenseStrings;
     }
